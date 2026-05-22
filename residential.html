@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Residential Analyser — AussiePropLens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f8e;--paper:#fafaf8;--paper2:#f2f1ed;--paper3:#e8e6df;--gold:#c9973a;--gold2:#f0c063;--teal:#1a7a6e;--border:rgba(15,17,23,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:0.875rem;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--ink);}
+.page-header{padding:100px 2rem 2rem;max-width:1100px;margin:0 auto;}
+.tier-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);background:rgba(26,122,110,0.1);border:1px solid rgba(26,122,110,0.2);padding:5px 12px;border-radius:20px;margin-bottom:1rem;}
+.page-title{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-0.03em;margin-bottom:0.5rem;}
+.page-sub{font-size:0.9375rem;color:var(--ink2);}
+.tool-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;}
+.tool-grid{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:900px){.tool-grid{grid-template-columns:1fr;}}
+.panel{background:var(--paper);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.panel-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-head h3{font-size:0.875rem;font-weight:500;}
+.panel-body{padding:1.5rem;}
+.field{margin-bottom:1.25rem;}
+.field label{display:block;font-size:0.75rem;color:var(--ink3);margin-bottom:5px;letter-spacing:0.03em;}
+.field input,.field select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.875rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;}
+.field input:focus,.field select:focus{border-color:var(--gold);}
+.slider-wrap{display:flex;align-items:center;gap:10px;}
+.slider-wrap input[type=range]{flex:1;accent-color:var(--ink);}
+.slider-val{font-size:0.8rem;color:var(--ink2);min-width:42px;text-align:right;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem;}
+.metric{background:var(--paper2);border-radius:10px;padding:12px 14px;}
+.metric-label{font-size:0.7rem;color:var(--ink3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px;}
+.metric-val{font-size:1.375rem;font-weight:500;color:var(--ink);}
+.stress-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+.stress-box{border-radius:8px;padding:10px;text-align:center;}
+.stress-label{font-size:0.7rem;font-weight:500;margin-bottom:2px;}
+.stress-val{font-size:1rem;font-weight:500;}
+.scores-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem;}
+.score-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.score-label{font-size:0.8125rem;color:var(--ink2);flex:1;}
+.score-bar-wrap{width:100px;height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:3px;transition:width 0.4s;}
+.score-badge{font-size:0.7rem;padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem;}
+.market-item{background:var(--paper2);border-radius:8px;padding:10px 12px;}
+.market-item-label{font-size:0.7rem;color:var(--ink3);margin-bottom:2px;}
+.market-item-val{font-size:0.9375rem;font-weight:500;}
+.ai-btn{width:100%;padding:12px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;margin-bottom:1rem;}
+.ai-btn:hover{opacity:0.85;}
+.ai-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.news-btn{width:100%;padding:10px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:8px;font-size:0.875rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-bottom:1rem;}
+.news-btn:hover{background:var(--paper2);}
+.ai-output{background:var(--paper2);border-radius:10px;padding:1.25rem;font-size:0.875rem;color:var(--ink2);line-height:1.6;}
+.insight-block{border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:0.8125rem;line-height:1.6;}
+.insight-block:last-child{margin-bottom:0;}
+.insight-head{font-size:0.7rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;}
+.rating-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.rating-pill{display:flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;}
+.flags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.flag-tag{font-size:0.7rem;padding:3px 10px;border-radius:10px;}
+.news-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.news-item:last-child{border-bottom:none;}
+.news-source{font-size:0.7rem;color:var(--ink3);}
+.news-headline{font-size:0.8125rem;color:var(--ink);line-height:1.4;margin:2px 0;}
+.news-summary{font-size:0.75rem;color:var(--ink2);line-height:1.5;}
+.sentiment-pill{font-size:0.65rem;padding:2px 8px;border-radius:8px;}
+.spinner{display:flex;align-items:center;gap:8px;font-size:0.8125rem;color:var(--ink3);padding:0.5rem 0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block;}
+.verdict-box{border-radius:8px;padding:1rem 1.25rem;background:var(--paper2);border-left:3px solid var(--gold);font-size:0.875rem;color:var(--ink2);line-height:1.7;}
+.section-divider{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin:1.25rem 0 0.75rem;padding-bottom:6px;border-bottom:1px solid var(--border);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-back">← Back</a>
+  <a href="index.html" class="nav-logo">Aussie<span>Prop</span>Lens</a>
+  <span style="font-size:0.75rem;color:var(--teal);background:rgba(26,122,110,0.1);padding:4px 12px;border-radius:20px;">Residential</span>
+</nav>
+
+<div class="page-header">
+  <div class="tier-badge">🏡 Residential · $20/mo</div>
+  <h1 class="page-title">Residential deal analyser</h1>
+  <p class="page-sub">Enter a suburb and property details to get AI-powered insights, suburb scores, and financial analysis.</p>
+</div>
+
+<div class="tool-wrap">
+  <div class="tool-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Property inputs</h3></div>
+        <div class="panel-body">
+          <div class="field-row">
+            <div class="field"><label>Suburb / postcode</label><input type="text" id="suburb" value="Surry Hills 2010" placeholder="e.g. Bondi 2026"></div>
+            <div class="field"><label>Type</label><select id="ptype"><option>House</option><option selected>Apartment</option><option>Townhouse</option><option>Studio</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Purchase price ($)</label><input type="number" id="price" value="950000" oninput="calc()"></div>
+            <div class="field"><label>Weekly rent ($)</label><input type="number" id="rent" value="720" oninput="calc()"></div>
+          </div>
+          <div class="field"><label>Deposit — <span id="dep-o">20%</span></label><div class="slider-wrap"><input type="range" min="5" max="40" value="20" step="1" id="deposit" oninput="calc();document.getElementById('dep-o').textContent=this.value+'%'"></div></div>
+          <div class="field"><label>Interest rate — <span id="rate-o">6.1%</span></label><div class="slider-wrap"><input type="range" min="2" max="10" value="6.1" step="0.1" id="irate" oninput="calc();document.getElementById('rate-o').textContent=parseFloat(this.value).toFixed(1)+'%'"></div></div>
+          <div class="field"><label>Loan term — <span id="term-o">30yr</span></label><div class="slider-wrap"><input type="range" min="10" max="30" value="30" step="1" id="lterm" oninput="calc();document.getElementById('term-o').textContent=this.value+'yr'"></div></div>
+          <div class="field"><label>Annual costs ($)</label><input type="number" id="costs" value="9500" oninput="calc()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+      <div class="panel">
+        <div class="panel-head"><h3>Financial snapshot</h3></div>
+        <div class="panel-body">
+          <div class="metrics-grid" id="fin-metrics"></div>
+          <div class="section-divider">Rate stress test</div>
+          <div class="stress-grid" id="stress-grid"></div>
+          <div class="section-divider">Investment verdict</div>
+          <div class="verdict-box" id="verdict">Adjust inputs to generate verdict.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Suburb intelligence</h3></div>
+        <div class="panel-body">
+          <div class="section-divider">Location scores</div>
+          <div class="scores-list" id="scores-list"></div>
+          <div class="section-divider">Market data</div>
+          <div class="market-grid" id="market-grid"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>AI insights</h3></div>
+        <div class="panel-body">
+          <button class="ai-btn" id="ai-btn" onclick="runAI()">✦ Generate AI suburb analysis →</button>
+          <div id="ai-output"><p style="font-size:0.8125rem;color:var(--ink3)">Click above to generate AI-powered investment insights for this suburb and deal.</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Live news</h3></div>
+        <div class="panel-body">
+          <button class="news-btn" id="news-btn" onclick="fetchNews()">↻ Load market news</button>
+          <div id="news-output"><p style="font-size:0.8125rem;color:var(--ink3)">Click above to load relevant property news for this suburb and market.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getSuburbData(s){
+  const t=s.toLowerCase();
+  const base={crime:62,walk:81,transit:88,school:74,life:79,medAge:34,owner:38,medUnit:820000,medHouse:1420000,growth:6.2,yield:4.1,vac:1.8,clear:74,dom:28};
+  if(t.includes('surry')||t.includes('2010'))return{...base,crime:55,walk:89,medUnit:870000,growth:7.1};
+  if(t.includes('bondi')||t.includes('2026'))return{...base,crime:58,walk:85,medUnit:1100000,growth:5.8,yield:3.6};
+  if(t.includes('parramatta')||t.includes('2150'))return{...base,crime:48,walk:78,medUnit:620000,growth:8.4,yield:4.9};
+  if(t.includes('newtown')||t.includes('2042'))return{...base,crime:52,walk:92,medUnit:790000,growth:6.5,yield:4.3};
+  if(t.includes('melbourne')||t.includes('3000'))return{...base,crime:44,walk:94,medUnit:550000,growth:4.2,yield:4.7};
+  if(t.includes('brisbane')||t.includes('4000'))return{...base,crime:51,walk:76,medUnit:640000,growth:9.1,yield:5.2};
+  return base;
+}
+function calc(){
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const wr=parseFloat(document.getElementById('rent').value)||0;
+  const dep=parseFloat(document.getElementById('deposit').value)/100;
+  const rate=parseFloat(document.getElementById('irate').value)/100;
+  const term=parseFloat(document.getElementById('lterm').value);
+  const costs=parseFloat(document.getElementById('costs').value)||0;
+  const ar=wr*52,loan=price*(1-dep),n=term*12,r=rate/12;
+  const mo=r===0?loan/n:loan*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+  const gross=price>0?(ar/price)*100:0;
+  const net=price>0?((ar-costs)/price)*100:0;
+  const cf=(ar-costs-mo*12)/12;
+  document.getElementById('fin-metrics').innerHTML=[
+    {l:'Gross yield',v:gross.toFixed(2)+'%'},
+    {l:'Net yield',v:net.toFixed(2)+'%'},
+    {l:'Monthly repayment',v:'$'+Math.round(mo).toLocaleString()},
+    {l:'Monthly cash flow',v:(cf>=0?'+$':'-$')+Math.abs(Math.round(cf)).toLocaleString(),c:cf>=0?'#1a7a6e':'#c23b2a'},
+    {l:'Deposit required',v:'$'+Math.round(price*dep).toLocaleString()},
+    {l:'Annual interest',v:'$'+Math.round(loan*rate).toLocaleString()},
+  ].map(m=>`<div class="metric"><div class="metric-label">${m.l}</div><div class="metric-val" style="${m.c?'color:'+m.c:''}">${m.v}</div></div>`).join('');
+  document.getElementById('stress-grid').innerHTML=[1,2,3].map(b=>{
+    const nr=(rate+b/100)/12;
+    const nm=nr===0?loan/n:loan*(nr*Math.pow(1+nr,n))/(Math.pow(1+nr,n)-1);
+    const ncf=(ar-costs-nm*12)/12;
+    const ok=ncf>=-300;
+    return`<div class="stress-box" style="background:${ok?'rgba(26,122,110,0.08)':'rgba(194,59,42,0.08)'}"><div class="stress-label" style="color:${ok?'#1a7a6e':'#c23b2a'}">+${b}% rise</div><div class="stress-val" style="color:${ok?'#1a7a6e':'#c23b2a'}">${ncf>=0?'+$':'-$'}${Math.abs(Math.round(ncf)).toLocaleString()}/mo</div></div>`;
+  }).join('');
+  let v='';
+  if(gross<3)v='Low gross yield — growth play only. Negative cashflow likely at all rate levels. Ensure capital growth thesis is strong before committing.';
+  else if(gross<4.5)v='Moderate yield. Likely negatively geared at current rates. Tax benefits and long-term capital growth support the thesis — run depreciation schedules.';
+  else if(gross<6)v='Solid yield approaching neutral cashflow. Good risk-adjusted entry if suburb fundamentals stack up. Stress test carefully against rate movements.';
+  else v='Strong yield with positive cashflow potential. Rare in major capitals — validate vacancy rates and asset quality. High yields can signal hidden risk.';
+  document.getElementById('verdict').textContent=v;
+  updateSuburb();
+}
+function updateSuburb(){
+  const s=document.getElementById('suburb').value||'Surry Hills';
+  const d=getSuburbData(s);
+  const crimeOk=d.crime>=75,crimeWarn=d.crime>=55;
+  const crimeColor=crimeOk?'#1a7a6e':crimeWarn?'#b07d2a':'#c23b2a';
+  const crimeBg=crimeOk?'rgba(26,122,110,0.1)':crimeWarn?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+  const crimeLabel=crimeOk?'Low crime':crimeWarn?'Moderate':'Higher crime';
+  document.getElementById('scores-list').innerHTML=[
+    {l:'Crime safety',s:d.crime,badge:crimeLabel,bc:crimeColor,bb:crimeBg},
+    {l:'Walkability',s:d.walk,badge:d.walk+'/100',bc:'#185fa5',bb:'rgba(24,95,165,0.08)'},
+    {l:'Public transit',s:d.transit,badge:d.transit+'/100',bc:'#1a7a6e',bb:'rgba(26,122,110,0.08)'},
+    {l:'Schools',s:d.school,badge:d.school+'/100',bc:'#b07d2a',bb:'rgba(176,125,42,0.08)'},
+    {l:'Lifestyle',s:d.life,badge:d.life+'/100',bc:'#185fa5',bb:'rgba(24,95,165,0.08)'},
+  ].map(r=>`<div class="score-row"><span class="score-label">${r.l}</span><div class="score-bar-wrap"><div class="score-bar-fill" style="width:${r.s}%;background:${r.bc}"></div></div><span class="score-badge" style="background:${r.bb};color:${r.bc}">${r.badge}</span></div>`).join('');
+  document.getElementById('market-grid').innerHTML=[
+    {l:'Median unit',v:'$'+d.medUnit.toLocaleString()},
+    {l:'Annual growth',v:'+'+d.growth+'%'},
+    {l:'Rental yield',v:d.yield+'%'},
+    {l:'Vacancy rate',v:d.vac+'%'},
+    {l:'Auction clear.',v:d.clear+'%'},
+    {l:'Days on market',v:d.dom+' days'},
+  ].map(m=>`<div class="market-item"><div class="market-item-label">${m.l}</div><div class="market-item-val">${m.v}</div></div>`).join('');
+}
+async function runAI(){
+  const suburb=document.getElementById('suburb').value||'Surry Hills 2010';
+  const price=document.getElementById('price').value;
+  const rent=document.getElementById('rent').value;
+  const ptype=document.getElementById('ptype').value;
+  const d=getSuburbData(suburb);
+  const btn=document.getElementById('ai-btn');
+  btn.disabled=true;
+  document.getElementById('ai-output').innerHTML='<div class="spinner"><span class="spin">⟳</span> Generating suburb intelligence...</div>';
+  const prompt=`You are a senior Australian property analyst. Provide concise investment intelligence for a ${ptype} in ${suburb}. Price: $${parseInt(price).toLocaleString()}, weekly rent: $${rent}. Suburb: crime ${d.crime}/100, walkability ${d.walk}/100, growth ${d.growth}%, vacancy ${d.vac}%, median unit $${d.medUnit.toLocaleString()}.
+
+Return ONLY valid JSON with keys: "outlook" (2 sentences), "bullCase" (2 sentences), "bearCase" (2 sentences), "crimeContext" (1 sentence), "flags" (array of 4 short strings), "rating" (number 1-10), "ratingLabel" (one word: Strong/Solid/Moderate/Cautious).`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const p=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const rc=p.rating>=8?'#1a7a6e':p.rating>=6?'#b07d2a':'#c23b2a';
+    const rb=p.rating>=8?'rgba(26,122,110,0.1)':p.rating>=6?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+    document.getElementById('ai-output').innerHTML=`
+      <div class="rating-row"><span style="font-size:0.8125rem;font-weight:500">${suburb}</span><div class="rating-pill" style="background:${rb}"><span style="font-size:1.25rem;font-weight:500;color:${rc}">${p.rating}</span><span style="font-size:0.75rem;color:${rc}">/10 · ${p.ratingLabel}</span></div></div>
+      <div class="insight-block" style="background:rgba(24,95,165,0.07)"><div class="insight-head" style="color:#185fa5">Suburb outlook</div><div style="color:var(--ink2)">${p.outlook}</div></div>
+      <div class="insight-block" style="background:rgba(26,122,110,0.07)"><div class="insight-head" style="color:#1a7a6e">Bull case</div><div style="color:var(--ink2)">${p.bullCase}</div></div>
+      <div class="insight-block" style="background:rgba(194,59,42,0.07)"><div class="insight-head" style="color:#c23b2a">Bear case</div><div style="color:var(--ink2)">${p.bearCase}</div></div>
+      <div class="insight-block" style="background:rgba(176,125,42,0.07)"><div class="insight-head" style="color:#b07d2a">Crime & safety</div><div style="color:var(--ink2)">${p.crimeContext}</div></div>
+      <div class="flags-wrap">${p.flags.map(f=>`<span class="flag-tag" style="background:var(--paper3);color:var(--ink2)">${f}</span>`).join('')}</div>`;
+  }catch(e){document.getElementById('ai-output').innerHTML='<p style="color:#c23b2a;font-size:0.8125rem">Could not generate insights. Please try again.</p>';}
+  btn.disabled=false;
+}
+async function fetchNews(){
+  const suburb=document.getElementById('suburb').value||'Sydney';
+  const btn=document.getElementById('news-btn');
+  btn.disabled=true;
+  document.getElementById('news-output').innerHTML='<div class="spinner"><span class="spin">⟳</span> Loading market news...</div>';
+  const prompt=`Generate 4 realistic recent news items for property investors interested in ${suburb}, Australia in 2026. Cover interest rates, suburb trends, rental demand, and market conditions. Return ONLY a JSON array of 4 objects: {"source":string,"headline":string (max 12 words),"summary":string (1-2 sentences),"sentiment":"positive"|"neutral"|"negative"}. No markdown.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const articles=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const sc={positive:'#1a7a6e',neutral:var(--ink3)??'#7a7f8e',negative:'#c23b2a'};
+    const sb={positive:'rgba(26,122,110,0.1)',neutral:'var(--paper2)',negative:'rgba(194,59,42,0.1)'};
+    document.getElementById('news-output').innerHTML=articles.map(a=>`
+      <div class="news-item">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <span class="news-source">${a.source}</span>
+          <span class="sentiment-pill" style="background:${a.sentiment==='positive'?'rgba(26,122,110,0.1)':a.sentiment==='negative'?'rgba(194,59,42,0.1)':'var(--paper3)'};color:${a.sentiment==='positive'?'#1a7a6e':a.sentiment==='negative'?'#c23b2a':'#7a7f8e'}">${a.sentiment}</span>
+        </div>
+        <p class="news-headline">${a.headline}</p>
+        <p class="news-summary">${a.summary}</p>
+      </div>`).join('');
+  }catch(e){document.getElementById('news-output').innerHTML='<p style="color:#c23b2a;font-size:0.8125rem">Could not load news. Please try again.</p>';}
+  btn.disabled=false;
+}
+calc();
+</script>
+</body>
+</html>

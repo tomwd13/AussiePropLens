@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institutional Analyser — AussiePropLens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f8e;--paper:#fafaf8;--paper2:#f2f1ed;--paper3:#e8e6df;--gold:#c9973a;--gold2:#f0c063;--border:rgba(15,17,23,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;}
+.nav-logo span{color:var(--gold);}
+.nav-back{font-size:0.875rem;color:var(--ink2);text-decoration:none;}
+.page-header{padding:100px 2rem 2rem;max-width:1100px;margin:0 auto;}
+.tier-badge{display:inline-flex;align-items:center;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);background:var(--paper2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;margin-bottom:1rem;}
+.page-title{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-0.03em;margin-bottom:0.5rem;}
+.page-sub{font-size:0.9375rem;color:var(--ink2);}
+.tool-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;}
+.tool-grid{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:900px){.tool-grid{grid-template-columns:1fr;}}
+.panel{background:var(--paper);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;}
+.panel-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);}
+.panel-head h3{font-size:0.875rem;font-weight:500;}
+.panel-body{padding:1.5rem;}
+.field{margin-bottom:1.25rem;}
+.field label{display:block;font-size:0.75rem;color:var(--ink3);margin-bottom:5px;}
+.field input,.field select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.875rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.slider-wrap{display:flex;align-items:center;gap:10px;}
+.slider-wrap input[type=range]{flex:1;accent-color:var(--ink);}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+.metric{background:var(--paper2);border-radius:10px;padding:12px 14px;}
+.metric-label{font-size:0.7rem;color:var(--ink3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px;}
+.metric-val{font-size:1.25rem;font-weight:500;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem;}
+.scenario-box{border-radius:8px;padding:12px;text-align:center;}
+.waterfall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:1rem;background:var(--paper2);border-radius:10px;margin-bottom:1.25rem;}
+.wf-item-label{font-size:0.7rem;color:var(--ink3);margin-bottom:4px;}
+.wf-item-val{font-size:1rem;font-weight:500;}
+.wf-item-sub{font-size:0.75rem;color:var(--ink3);margin-top:2px;}
+.ai-btn{width:100%;padding:12px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;margin-bottom:1rem;}
+.ai-btn:hover{opacity:0.85;}
+.ai-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.news-btn{width:100%;padding:10px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:8px;font-size:0.875rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-bottom:1rem;}
+.news-btn:hover{background:var(--paper2);}
+.insight-block{border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:0.8125rem;line-height:1.6;}
+.insight-head{font-size:0.7rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;}
+.section-divider{font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin:1.25rem 0 0.75rem;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.flag-tag{display:inline-block;font-size:0.7rem;padding:3px 10px;border-radius:10px;margin:2px 3px 2px 0;}
+.rating-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.news-item{padding:10px 0;border-bottom:1px solid var(--border);}
+.news-item:last-child{border-bottom:none;}
+.spinner{display:flex;align-items:center;gap:8px;font-size:0.8125rem;color:var(--ink3);padding:0.5rem 0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin 1s linear infinite;display:inline-block;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-back">← Back</a>
+  <a href="index.html" class="nav-logo">Aussie<span>Prop</span>Lens</a>
+  <span style="font-size:0.75rem;color:var(--ink);background:var(--paper2);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">Institutional</span>
+</nav>
+<div class="page-header">
+  <div class="tier-badge">⬛ Institutional · $120/mo</div>
+  <h1 class="page-title">Institutional deal analyser</h1>
+  <p class="page-sub">IRR, equity multiples, LP/GP waterfall, scenario analysis and AI-generated investment committee memos.</p>
+</div>
+<div class="tool-wrap">
+  <div class="tool-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Deal parameters</h3></div>
+        <div class="panel-body">
+          <div class="field-row">
+            <div class="field"><label>Asset name</label><input type="text" id="name" value="Gateway Office Tower, Parramatta"></div>
+            <div class="field"><label>Asset class</label><select id="aclass"><option selected>Prime office</option><option>Core industrial</option><option>Retail centre</option><option>Build-to-rent</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Acquisition price ($M)</label><input type="number" id="price" value="85" step="0.5" oninput="calc()"></div>
+            <div class="field"><label>Stabilised NOI ($M p.a.)</label><input type="number" id="noi" value="5.4" step="0.1" oninput="calc()"></div>
+          </div>
+          <div class="field"><label>Sponsor / fund</label><input type="text" id="sponsor" value="Meridian Property Fund II"></div>
+          <div class="field"><label>Hurdle rate (%) — <span id="hurdle-o">15%</span></label><div class="slider-wrap"><input type="range" min="8" max="25" value="15" step="1" id="hurdle" oninput="calc();document.getElementById('hurdle-o').textContent=this.value+'%'"></div></div>
+          <div class="field"><label>Exit cap rate — <span id="exit-o">6.75%</span></label><div class="slider-wrap"><input type="range" min="3" max="9" value="6.75" step="0.05" id="exitcap" oninput="calc();document.getElementById('exit-o').textContent=parseFloat(this.value).toFixed(2)+'%'"></div></div>
+          <div class="field"><label>Hold period — <span id="hold-o">7yr</span></label><div class="slider-wrap"><input type="range" min="2" max="15" value="7" step="1" id="hold" oninput="calc();document.getElementById('hold-o').textContent=this.value+'yr'"></div></div>
+          <div class="field"><label>Debt LTV — <span id="ltv-o">55%</span></label><div class="slider-wrap"><input type="range" min="40" max="70" value="55" step="5" id="ltv" oninput="calc();document.getElementById('ltv-o').textContent=this.value+'%'"></div></div>
+          <div class="field"><label>Debt cost — <span id="debt-o">6.2%</span></label><div class="slider-wrap"><input type="range" min="4" max="9" value="6.2" step="0.1" id="debt" oninput="calc();document.getElementById('debt-o').textContent=parseFloat(this.value).toFixed(1)+'%'"></div></div>
+          <div class="field"><label>NOI growth (p.a.) — <span id="growth-o">3.0%</span></label><div class="slider-wrap"><input type="range" min="0" max="6" value="3" step="0.5" id="growth" oninput="calc();document.getElementById('growth-o').textContent=parseFloat(this.value).toFixed(1)+'%'"></div></div>
+          <div class="field-row">
+            <div class="field"><label>Pref return (LP) — <span id="pref-o">8%</span></label><div class="slider-wrap"><input type="range" min="5" max="12" value="8" step="0.5" id="pref" oninput="calc();document.getElementById('pref-o').textContent=parseFloat(this.value).toFixed(1)+'%'"></div></div>
+            <div class="field"><label>GP carry — <span id="carry-o">20%</span></label><div class="slider-wrap"><input type="range" min="10" max="30" value="20" step="5" id="carry" oninput="calc();document.getElementById('carry-o').textContent=this.value+'%'"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Return metrics</h3></div>
+        <div class="panel-body">
+          <div class="metrics-grid" id="metrics"></div>
+          <div class="section-divider">Scenario analysis</div>
+          <div class="scenario-grid" id="scenarios"></div>
+          <div class="section-divider">LP / GP waterfall</div>
+          <div class="waterfall-grid" id="waterfall"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>AI investment committee memo</h3></div>
+        <div class="panel-body">
+          <button class="ai-btn" id="ai-btn" onclick="runAI()">✦ Generate IC memo →</button>
+          <div id="ai-out"><p style="font-size:0.8125rem;color:var(--ink3)">Click above for a full IC memo: investment thesis, key risks, ESG factors, exit options, and committee recommendation.</p></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Institutional market signals</h3></div>
+        <div class="panel-body">
+          <button class="news-btn" onclick="fetchNews()">↻ Load institutional signals</button>
+          <div id="news-out"><p style="font-size:0.8125rem;color:var(--ink3)">Click above for REIT flows, offshore capital, and macro conditions relevant to this asset class.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function irrCalc(cfs){
+  let r=0.1;
+  for(let i=0;i<300;i++){
+    const f=cfs.reduce((s,c,t)=>s+c/Math.pow(1+r,t),0);
+    const d=cfs.reduce((s,c,t)=>s-t*c/Math.pow(1+r,t+1),0);
+    if(!d)break;
+    const nr=r-f/d;
+    if(Math.abs(nr-r)<1e-8)return nr;
+    r=Math.max(-0.99,Math.min(nr,10));
+  }
+  return r;
+}
+function scenCalc(price,noi0,exitCap,hold,ltv,debtCost,growth){
+  const debt=price*ltv,equity=price*(1-ltv),annInt=debt*debtCost;
+  const noiArr=Array.from({length:hold},(_,i)=>noi0*Math.pow(1+growth,i+1));
+  const exitNOI=noiArr[hold-1];
+  const exitVal=exitCap>0?exitNOI/exitCap:0;
+  const cfs=noiArr.map(n=>n-annInt);
+  cfs[hold-1]+=exitVal-debt;
+  const irrV=irrCalc([-equity,...cfs])*100;
+  const totalDist=cfs.reduce((a,b)=>a+b,0);
+  const em=equity>0?totalDist/equity:0;
+  return{irrV,em,exitVal,equity,totalDist,debt};
+}
+function calc(){
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const noi0=parseFloat(document.getElementById('noi').value)||0;
+  const exitCap=parseFloat(document.getElementById('exitcap').value)/100;
+  const hold=parseInt(document.getElementById('hold').value);
+  const ltv=parseFloat(document.getElementById('ltv').value)/100;
+  const debtCost=parseFloat(document.getElementById('debt').value)/100;
+  const growth=parseFloat(document.getElementById('growth').value)/100;
+  const pref=parseFloat(document.getElementById('pref').value)/100;
+  const carry=parseFloat(document.getElementById('carry').value)/100;
+  const hurdle=parseFloat(document.getElementById('hurdle').value)||15;
+  const b=scenCalc(price,noi0,exitCap,hold,ltv,debtCost,growth);
+  const prefCum=b.equity*Math.pow(1+pref,hold);
+  const abovePref=Math.max(0,b.totalDist-prefCum);
+  const gpCarry=abovePref*carry;
+  const lpTotal=b.totalDist-gpCarry;
+  const lpEM=b.equity>0?lpTotal/b.equity:0;
+  const rc=b.irrV>=hurdle?'#1a7a6e':b.irrV>=hurdle*0.7?'#b07d2a':'#c23b2a';
+  document.getElementById('metrics').innerHTML=[
+    {l:'Levered IRR',v:b.irrV.toFixed(1)+'%',c:rc},
+    {l:'Equity multiple',v:b.em.toFixed(2)+'x'},
+    {l:'LP equity multiple',v:lpEM.toFixed(2)+'x'},
+    {l:'GP carry ($M)',v:'$'+gpCarry.toFixed(1)+'M'},
+    {l:'Exit value ($M)',v:'$'+b.exitVal.toFixed(1)+'M'},
+    {l:'Equity in ($M)',v:'$'+b.equity.toFixed(1)+'M'},
+  ].map(m=>`<div class="metric"><div class="metric-label">${m.l}</div><div class="metric-val" style="${m.c?'color:'+m.c:''}">${m.v}</div></div>`).join('');
+  const scens=[{l:'Bear',ca:+0.75,ga:-0.01},{l:'Base',ca:0,ga:0},{l:'Bull',ca:-0.5,ga:+0.01}];
+  document.getElementById('scenarios').innerHTML=scens.map(s=>{
+    const r=scenCalc(price,noi0,(exitCap+s.ca/100),hold,ltv,debtCost,(growth+s.ga));
+    const ok=r.irrV>=hurdle,warn=r.irrV>=hurdle*0.7;
+    const c=ok?'#1a7a6e':warn?'#b07d2a':'#c23b2a';
+    const bg=ok?'rgba(26,122,110,0.08)':warn?'rgba(176,125,42,0.08)':'rgba(194,59,42,0.08)';
+    return`<div class="scenario-box" style="background:${bg}"><div style="font-size:0.75rem;font-weight:500;color:${c};margin-bottom:2px">${s.l}</div><div style="font-size:1.375rem;font-weight:500;color:${c}">${r.irrV.toFixed(1)}%</div><div style="font-size:0.75rem;color:${c}">IRR · ${r.em.toFixed(2)}x</div></div>`;
+  }).join('');
+  document.getElementById('waterfall').innerHTML=`
+    <div><div class="wf-item-label">LP preferred return</div><div class="wf-item-val">${(pref*100).toFixed(1)}% p.a.</div><div class="wf-item-sub">Cumulative: $${prefCum.toFixed(1)}M</div></div>
+    <div><div class="wf-item-label">GP carry (above pref)</div><div class="wf-item-val">${(carry*100).toFixed(0)}%</div><div class="wf-item-sub">GP earns: $${gpCarry.toFixed(1)}M</div></div>
+    <div><div class="wf-item-label">LP net return</div><div class="wf-item-val">${lpEM.toFixed(2)}x EM</div><div class="wf-item-sub">Net to LP: $${lpTotal.toFixed(1)}M</div></div>`;
+}
+async function runAI(){
+  const name=document.getElementById('name').value;
+  const aclass=document.getElementById('aclass').value;
+  const price=document.getElementById('price').value;
+  const noi=document.getElementById('noi').value;
+  const sponsor=document.getElementById('sponsor').value;
+  const hurdle=document.getElementById('hurdle').value;
+  const hold=document.getElementById('hold').value;
+  const btn=document.getElementById('ai-btn');
+  btn.disabled=true;
+  document.getElementById('ai-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Drafting IC memo...</div>';
+  const prompt=`You are a senior real estate fund manager drafting an investment committee memo for a ${aclass} acquisition. Asset: ${name}. Fund: ${sponsor}. Price: $${price}M. NOI: $${noi}M. Hold: ${hold}yr. Hurdle: ${hurdle}%.
+Return ONLY valid JSON: {"thesis":string (2 sentences),"valueCreation":string (2 sentences),"keyRisks":array of 4 strings,"esgFactors":string (2 sentences),"exitOptions":array of 3 strings,"macroContext":string (2 sentences),"recommendation":one of "Approve"|"Approve with conditions"|"Further diligence"|"Decline","recommendationRationale":string (2 sentences),"rating":number 1-10}.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const p=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const isApprove=p.recommendation==='Approve';
+    const isCondition=p.recommendation.includes('condition');
+    const rc=isApprove?'#1a7a6e':isCondition?'#b07d2a':'#c23b2a';
+    const rb=isApprove?'rgba(26,122,110,0.1)':isCondition?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+    const rsc=p.rating>=8?'#1a7a6e':p.rating>=6?'#b07d2a':'#c23b2a';
+    document.getElementById('ai-out').innerHTML=`
+      <div class="rating-row">
+        <div><p style="font-size:0.8125rem;font-weight:500;margin:0">${name}</p><p style="font-size:0.75rem;color:var(--ink3);margin:0">${sponsor}</p></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1rem;font-weight:500;color:${rsc}">${p.rating}/10</span><span style="font-size:0.75rem;padding:4px 14px;border-radius:20px;background:${rb};color:${rc};font-weight:500">${p.recommendation}</span></div>
+      </div>
+      <div class="insight-block" style="background:rgba(24,95,165,0.07)"><div class="insight-head" style="color:#185fa5">Investment thesis</div><div style="color:var(--ink2)">${p.thesis}</div></div>
+      <div class="insight-block" style="background:rgba(26,122,110,0.07)"><div class="insight-head" style="color:#1a7a6e">Value creation</div><div style="color:var(--ink2)">${p.valueCreation}</div></div>
+      <div class="insight-block" style="background:var(--paper2)"><div class="insight-head" style="color:var(--ink3)">Macro context</div><div style="color:var(--ink2)">${p.macroContext}</div></div>
+      <div class="insight-block" style="background:rgba(176,125,42,0.07)"><div class="insight-head" style="color:#b07d2a">ESG assessment</div><div style="color:var(--ink2)">${p.esgFactors}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">
+        <div><p style="font-size:0.7rem;font-weight:500;color:#c23b2a;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.06em">Key risks</p><div>${p.keyRisks.map(r=>`<span class="flag-tag" style="background:rgba(194,59,42,0.08);color:#c23b2a">${r}</span>`).join('')}</div></div>
+        <div><p style="font-size:0.7rem;font-weight:500;color:#1a7a6e;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.06em">Exit options</p><div>${p.exitOptions.map(r=>`<span class="flag-tag" style="background:rgba(26,122,110,0.08);color:#1a7a6e">${r}</span>`).join('')}</div></div>
+      </div>
+      <div class="insight-block" style="background:${rb}"><div class="insight-head" style="color:${rc}">Committee rationale</div><div style="color:${rc}">${p.recommendationRationale}</div></div>`;
+  }catch(e){document.getElementById('ai-out').innerHTML='<p style="color:#c23b2a;font-size:0.8125rem">Could not generate memo. Please try again.</p>';}
+  btn.disabled=false;
+}
+async function fetchNews(){
+  const aclass=document.getElementById('aclass').value;
+  document.getElementById('news-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Loading institutional signals...</div>';
+  const prompt=`Generate 4 realistic institutional property market intelligence items for ${aclass} investment in Australia in 2026. Cover REIT flows, interest rates, offshore capital, sector demand. Return ONLY a JSON array of 4 objects: {"source":string,"headline":string (max 12 words),"summary":string (1-2 sentences),"sentiment":"positive"|"neutral"|"negative"}. No markdown.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const articles=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    document.getElementById('news-out').innerHTML=articles.map(a=>`
+      <div class="news-item">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:0.7rem;color:var(--ink3)">${a.source}</span>
+          <span style="font-size:0.65rem;padding:2px 8px;border-radius:8px;background:${a.sentiment==='positive'?'rgba(26,122,110,0.1)':a.sentiment==='negative'?'rgba(194,59,42,0.1)':'var(--paper3)'};color:${a.sentiment==='positive'?'#1a7a6e':a.sentiment==='negative'?'#c23b2a':'#7a7f8e'}">${a.sentiment}</span>
+        </div>
+        <p style="font-size:0.8125rem;color:var(--ink);line-height:1.4;margin:2px 0">${a.headline}</p>
+        <p style="font-size:0.75rem;color:var(--ink2);line-height:1.5">${a.summary}</p>
+      </div>`).join('');
+  }catch(e){document.getElementById('news-out').innerHTML='<p style="color:#c23b2a;font-size:0.8125rem">Could not load signals.</p>';}
+}
+calc();
+</script>
+</body>
+</html>
