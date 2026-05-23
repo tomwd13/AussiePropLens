@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institutional Analyser — AussiePropLens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f8e;--paper:#fafaf8;--paper2:#f2f1ed;--paper3:#e8e6df;--gold:#c9973a;--teal:#1a7a6e;--red:#c23b2a;--amber:#b07d2a;--blue:#185fa5;--border:rgba(15,17,23,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;}.nav-logo span{color:var(--gold);}
+.nav-back{font-size:0.875rem;color:var(--ink2);text-decoration:none;}
+.page-header{padding:100px 2rem 1.5rem;max-width:1100px;margin:0 auto;}
+.tier-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);background:var(--paper2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;margin-bottom:1rem;}
+.page-title{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.page-sub{font-size:0.9375rem;color:var(--ink2);}
+.tool-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;}
+.tool-grid{display:grid;grid-template-columns:400px 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:960px){.tool-grid{grid-template-columns:1fr;}}
+.panel{background:var(--paper);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;}
+.panel-head{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-head h3{font-size:0.875rem;font-weight:500;}
+.panel-body{padding:1.5rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;letter-spacing:0.04em;text-transform:uppercase;}
+.field input[type=number],.field input[type=text],.field select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;transition:border-color 0.15s;}
+.field input:focus{border-color:var(--gold);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pc-row{display:flex;gap:8px;align-items:center;}
+.pc-row input{width:120px;font-size:1.1rem;font-weight:500;letter-spacing:0.1em;padding:9px 12px;flex-shrink:0;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;}
+.pc-row input:focus{border-color:var(--gold);}
+.suburb-pill{display:inline-flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:0.8125rem;flex:1;}
+.suburb-pill b{font-weight:500;}.suburb-pill span{color:var(--ink3);font-size:0.75rem;}
+.suburb-pill .clr{cursor:pointer;color:var(--ink3);margin-left:auto;font-size:1rem;line-height:1;}.suburb-pill .clr:hover{color:var(--red);}
+.pc-msg{font-size:0.78rem;color:var(--ink3);margin-top:5px;min-height:18px;}.pc-msg.err{color:var(--red);}
+.dual-input{display:flex;align-items:center;gap:10px;margin-top:5px;}
+.dual-input input[type=range]{flex:1;accent-color:var(--ink);height:4px;cursor:pointer;}
+.dual-input input[type=number]{width:72px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;text-align:right;flex-shrink:0;}
+.dual-input input[type=number]:focus{border-color:var(--gold);}
+.dual-unit{font-size:0.8rem;color:var(--ink3);flex-shrink:0;min-width:24px;}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.1rem;}
+.metric{background:var(--paper2);border-radius:10px;padding:11px 14px;}
+.mlabel{font-size:0.68rem;color:var(--ink3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px;}
+.mval{font-size:1.2rem;font-weight:500;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.1rem;}
+.sbox{border-radius:8px;padding:11px;text-align:center;}
+.wf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:1rem;background:var(--paper2);border-radius:10px;margin-bottom:1.1rem;}
+.wf-lbl{font-size:0.68rem;color:var(--ink3);margin-bottom:3px;}
+.wf-val{font-size:1rem;font-weight:500;}
+.wf-sub{font-size:0.73rem;color:var(--ink3);margin-top:2px;}
+.divider{font-size:0.68rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin:1.1rem 0 0.6rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.ai-btn{width:100%;padding:11px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;margin-bottom:1rem;}
+.ai-btn:hover{opacity:0.85;}.ai-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.news-btn{width:100%;padding:9px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:8px;font-size:0.875rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-bottom:1rem;}
+.news-btn:hover{background:var(--paper2);}
+.iblock{border-radius:8px;padding:9px 13px;margin-bottom:7px;font-size:0.8rem;line-height:1.6;}
+.ihead{font-size:0.68rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px;}
+.rating-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;padding-bottom:9px;border-bottom:1px solid var(--border);}
+.flags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.flag{font-size:0.68rem;padding:3px 9px;border-radius:10px;}
+.news-item{padding:9px 0;border-bottom:1px solid var(--border);}.news-item:last-child{border-bottom:none;}
+.spinner{display:flex;align-items:center;gap:7px;font-size:0.8rem;color:var(--ink3);padding:0.5rem 0;}
+@keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin 0.8s linear infinite;display:inline-block;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-back">← Back</a>
+  <a href="index.html" class="nav-logo">Aussie<span>Prop</span>Lens</a>
+  <span style="font-size:0.75rem;color:var(--ink);background:var(--paper2);border:1px solid var(--border);padding:4px 12px;border-radius:20px;">Institutional</span>
+</nav>
+<div class="page-header">
+  <div class="tier-badge">⬛ Institutional · $250/mo</div>
+  <h1 class="page-title">Institutional deal analyser</h1>
+  <p class="page-sub">IRR, equity multiples, LP/GP waterfall, scenario analysis and AI-generated IC memos.</p>
+</div>
+<div class="tool-wrap">
+  <div class="tool-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Deal parameters</h3></div>
+        <div class="panel-body">
+
+          <div class="field">
+            <label>Postcode</label>
+            <div class="pc-row">
+              <input type="text" id="pc-input" maxlength="4" placeholder="2000" oninput="onPostcode(this.value)">
+              <div id="suburb-pill" style="display:none" class="suburb-pill">
+                <b id="suburb-name"></b><span id="suburb-state"></span>
+                <span class="clr" onclick="clearPostcode()">✕</span>
+              </div>
+            </div>
+            <div id="pc-msg" class="pc-msg">Enter a 4-digit postcode</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field"><label>Asset name</label><input type="text" id="aname" value="Gateway Office Tower"></div>
+            <div class="field"><label>Asset class</label>
+              <select id="aclass" onchange="calc()"><option selected>Prime office</option><option>Core industrial</option><option>Retail centre</option><option>Build-to-rent</option><option>Mixed-use</option></select>
+            </div>
+          </div>
+
+          <div class="field"><label>Fund / sponsor name</label><input type="text" id="sponsor" value="Meridian Property Fund II"></div>
+
+          <div class="field-row">
+            <div class="field"><label>Acquisition price ($M)</label><input type="number" id="price" value="85" step="0.5" oninput="calc()"></div>
+            <div class="field"><label>Stabilised NOI ($M p.a.)</label><input type="number" id="noi" value="5.4" step="0.1" oninput="calc()"></div>
+          </div>
+
+          <div class="field">
+            <label>Hurdle rate — <b id="hurdle-disp">15%</b></label>
+            <div class="dual-input">
+              <input type="range" id="hurdle-s" min="8" max="25" value="15" step="1" oninput="syncDual('hurdle',this.value)">
+              <input type="number" id="hurdle-n" value="15" min="8" max="25" step="1" oninput="syncDual('hurdle',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Exit cap rate — <b id="exitcap-disp">6.75%</b></label>
+            <div class="dual-input">
+              <input type="range" id="exitcap-s" min="3" max="9" value="6.75" step="0.05" oninput="syncDual('exitcap',this.value)">
+              <input type="number" id="exitcap-n" value="6.75" min="3" max="9" step="0.05" oninput="syncDual('exitcap',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Hold period — <b id="hold-disp">7 years</b></label>
+            <div class="dual-input">
+              <input type="range" id="hold-s" min="2" max="15" value="7" step="1" oninput="syncDual('hold',this.value)">
+              <input type="number" id="hold-n" value="7" min="2" max="15" step="1" oninput="syncDual('hold',this.value)">
+              <span class="dual-unit">yr</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Debt LTV — <b id="ltv-disp">55%</b></label>
+            <div class="dual-input">
+              <input type="range" id="ltv-s" min="40" max="70" value="55" step="5" oninput="syncDual('ltv',this.value)">
+              <input type="number" id="ltv-n" value="55" min="40" max="70" step="5" oninput="syncDual('ltv',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Debt cost — <b id="debt-disp">6.2%</b></label>
+            <div class="dual-input">
+              <input type="range" id="debt-s" min="4" max="9" value="6.2" step="0.1" oninput="syncDual('debt',this.value)">
+              <input type="number" id="debt-n" value="6.2" min="4" max="9" step="0.1" oninput="syncDual('debt',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>NOI growth p.a. — <b id="growth-disp">3.0%</b></label>
+            <div class="dual-input">
+              <input type="range" id="growth-s" min="0" max="6" value="3" step="0.5" oninput="syncDual('growth',this.value)">
+              <input type="number" id="growth-n" value="3" min="0" max="6" step="0.5" oninput="syncDual('growth',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>LP pref return — <b id="pref-disp">8.0%</b></label>
+              <div class="dual-input">
+                <input type="range" id="pref-s" min="5" max="12" value="8" step="0.5" oninput="syncDual('pref',this.value)">
+                <input type="number" id="pref-n" value="8" min="5" max="12" step="0.5" oninput="syncDual('pref',this.value)">
+                <span class="dual-unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>GP carry — <b id="carry-disp">20%</b></label>
+              <div class="dual-input">
+                <input type="range" id="carry-s" min="10" max="30" value="20" step="5" oninput="syncDual('carry',this.value)">
+                <input type="number" id="carry-n" value="20" min="10" max="30" step="5" oninput="syncDual('carry',this.value)">
+                <span class="dual-unit">%</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Return metrics</h3><span id="suburb-badge" style="font-size:0.75rem;color:var(--ink3)">—</span></div>
+        <div class="panel-body">
+          <div class="metrics-grid">
+            <div class="metric"><div class="mlabel">Levered IRR</div><div class="mval" id="m-irr">—</div></div>
+            <div class="metric"><div class="mlabel">Equity multiple</div><div class="mval" id="m-em">—</div></div>
+            <div class="metric"><div class="mlabel">LP equity multiple</div><div class="mval" id="m-lpem">—</div></div>
+            <div class="metric"><div class="mlabel">GP carry ($M)</div><div class="mval" id="m-carry">—</div></div>
+            <div class="metric"><div class="mlabel">Exit value ($M)</div><div class="mval" id="m-exit">—</div></div>
+            <div class="metric"><div class="mlabel">Equity in ($M)</div><div class="mval" id="m-eq">—</div></div>
+          </div>
+          <div class="divider">Scenario analysis</div>
+          <div class="scenario-grid" id="scenarios"></div>
+          <div class="divider">LP / GP waterfall</div>
+          <div class="wf-grid" id="waterfall"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>AI investment committee memo</h3></div>
+        <div class="panel-body">
+          <div class="usage-display" style="background:var(--paper2);border-radius:8px;padding:10px 14px;margin-bottom:10px;"></div>
+          <button class="ai-btn" id="ai-btn" onclick="runAI()">✦ Generate IC memo →</button>
+          <div id="ai-out" style="font-size:0.8125rem;color:var(--ink3)"><p>Click above to generate a full IC memo: thesis, risks, ESG, exit options, and committee recommendation.</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Institutional market signals</h3></div>
+        <div class="panel-body">
+          <button class="news-btn" onclick="fetchNews()">↻ Load institutional signals</button>
+          <div id="news-out" style="font-size:0.8125rem;color:var(--ink3)"><p>Click above for REIT flows, offshore capital, and macro conditions for this asset class.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const POSTCODES={
+  '2000':{suburb:'Sydney CBD',state:'NSW'},'2060':{suburb:'North Sydney',state:'NSW'},'2150':{suburb:'Parramatta',state:'NSW'},
+  '2113':{suburb:'Macquarie Park',state:'NSW'},'2065':{suburb:'St Leonards',state:'NSW'},'2015':{suburb:'Alexandria',state:'NSW'},
+  '3000':{suburb:'Melbourne CBD',state:'VIC'},'3008':{suburb:'Docklands',state:'VIC'},'3121':{suburb:'Richmond',state:'VIC'},
+  '4000':{suburb:'Brisbane CBD',state:'QLD'},'4006':{suburb:'Fortitude Valley',state:'QLD'},'4101':{suburb:'South Brisbane',state:'QLD'},
+  '5000':{suburb:'Adelaide CBD',state:'SA'},'6000':{suburb:'Perth CBD',state:'WA'},'2600':{suburb:'Canberra City',state:'ACT'},
+};
+let currentPostcode=null;
+let calcTimer=null;
+
+function onPostcode(val){
+  val=val.replace(/\D/g,'');document.getElementById('pc-input').value=val;
+  const msg=document.getElementById('pc-msg'),pill=document.getElementById('suburb-pill');
+  if(val.length<4){pill.style.display='none';msg.className='pc-msg';msg.textContent=val.length>0?`${4-val.length} more digit${4-val.length>1?'s':''}…`:'Enter a 4-digit postcode';currentPostcode=null;return;}
+  if(POSTCODES[val]){
+    const d=POSTCODES[val];currentPostcode=val;
+    document.getElementById('suburb-name').textContent=d.suburb;document.getElementById('suburb-state').textContent=d.state;
+    pill.style.display='inline-flex';msg.className='pc-msg';msg.textContent='';
+    document.getElementById('suburb-badge').textContent=d.suburb+', '+d.state;
+  } else {
+    currentPostcode=null;pill.style.display='none';msg.className='pc-msg err';msg.textContent='Postcode not found. Try another.';
+    document.getElementById('suburb-badge').textContent='—';
+  }
+}
+function clearPostcode(){
+  document.getElementById('pc-input').value='';document.getElementById('suburb-pill').style.display='none';
+  document.getElementById('pc-msg').textContent='Enter a 4-digit postcode';document.getElementById('pc-msg').className='pc-msg';
+  document.getElementById('suburb-badge').textContent='—';currentPostcode=null;
+}
+function syncDual(id,val){
+  val=parseFloat(val);
+  const s=document.getElementById(id+'-s'),n=document.getElementById(id+'-n');
+  const min=parseFloat(s.min),max=parseFloat(s.max);
+  val=Math.min(max,Math.max(min,isNaN(val)?min:val));
+  s.value=val;n.value=val;
+  updateLabels();clearTimeout(calcTimer);calcTimer=setTimeout(calc,60);
+}
+function updateLabels(){
+  document.getElementById('hurdle-disp').textContent=document.getElementById('hurdle-s').value+'%';
+  document.getElementById('exitcap-disp').textContent=parseFloat(document.getElementById('exitcap-s').value).toFixed(2)+'%';
+  document.getElementById('hold-disp').textContent=document.getElementById('hold-s').value+' years';
+  document.getElementById('ltv-disp').textContent=document.getElementById('ltv-s').value+'%';
+  document.getElementById('debt-disp').textContent=parseFloat(document.getElementById('debt-s').value).toFixed(1)+'%';
+  document.getElementById('growth-disp').textContent=parseFloat(document.getElementById('growth-s').value).toFixed(1)+'%';
+  document.getElementById('pref-disp').textContent=parseFloat(document.getElementById('pref-s').value).toFixed(1)+'%';
+  document.getElementById('carry-disp').textContent=document.getElementById('carry-s').value+'%';
+}
+function irrCalc(cfs){
+  let r=0.1;
+  for(let i=0;i<300;i++){
+    const f=cfs.reduce((s,c,t)=>s+c/Math.pow(1+r,t),0);
+    const d=cfs.reduce((s,c,t)=>s-t*c/Math.pow(1+r,t+1),0);
+    if(!d)break;const nr=r-f/d;
+    if(Math.abs(nr-r)<1e-8)return nr;
+    r=Math.max(-0.99,Math.min(nr,10));
+  }return r;
+}
+function scenCalc(price,noi0,exitCap,hold,ltv,debtCost,growth){
+  const debt=price*ltv,equity=price*(1-ltv),annInt=debt*debtCost;
+  const noiArr=Array.from({length:hold},(_,i)=>noi0*Math.pow(1+growth,i+1));
+  const exitNOI=noiArr[hold-1];const exitVal=exitCap>0?exitNOI/exitCap:0;
+  const cfs=noiArr.map(n=>n-annInt);cfs[hold-1]+=exitVal-debt;
+  const irrV=irrCalc([-equity,...cfs])*100;
+  const totalDist=cfs.reduce((a,b)=>a+b,0);
+  const em=equity>0?totalDist/equity:0;
+  return{irrV,em,exitVal,equity,totalDist,debt};
+}
+function calc(){
+  updateLabels();
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const noi0=parseFloat(document.getElementById('noi').value)||0;
+  const exitCap=parseFloat(document.getElementById('exitcap-s').value)/100;
+  const hold=parseInt(document.getElementById('hold-s').value);
+  const ltv=parseFloat(document.getElementById('ltv-s').value)/100;
+  const debtCost=parseFloat(document.getElementById('debt-s').value)/100;
+  const growth=parseFloat(document.getElementById('growth-s').value)/100;
+  const pref=parseFloat(document.getElementById('pref-s').value)/100;
+  const carry=parseFloat(document.getElementById('carry-s').value)/100;
+  const hurdle=parseFloat(document.getElementById('hurdle-s').value)||15;
+  const b=scenCalc(price,noi0,exitCap,hold,ltv,debtCost,growth);
+  const prefCum=b.equity*Math.pow(1+pref,hold);
+  const abovePref=Math.max(0,b.totalDist-prefCum);
+  const gpCarry=abovePref*carry;
+  const lpTotal=b.totalDist-gpCarry;
+  const lpEM=b.equity>0?lpTotal/b.equity:0;
+  const rc=b.irrV>=hurdle?'var(--teal)':b.irrV>=hurdle*0.7?'var(--amber)':'var(--red)';
+  const irrEl=document.getElementById('m-irr');
+  irrEl.textContent=b.irrV.toFixed(1)+'%';irrEl.style.color=rc;
+  document.getElementById('m-em').textContent=b.em.toFixed(2)+'x';
+  document.getElementById('m-lpem').textContent=lpEM.toFixed(2)+'x';
+  document.getElementById('m-carry').textContent='$'+gpCarry.toFixed(1)+'M';
+  document.getElementById('m-exit').textContent='$'+b.exitVal.toFixed(1)+'M';
+  document.getElementById('m-eq').textContent='$'+b.equity.toFixed(1)+'M';
+  const scens=[{l:'Bear',ca:+0.75,ga:-0.01},{l:'Base',ca:0,ga:0},{l:'Bull',ca:-0.5,ga:+0.01}];
+  document.getElementById('scenarios').innerHTML=scens.map(s=>{
+    const r=scenCalc(price,noi0,(exitCap+s.ca/100),hold,ltv,debtCost,(growth+s.ga));
+    const ok=r.irrV>=hurdle,warn=r.irrV>=hurdle*0.7;
+    const c=ok?'var(--teal)':warn?'var(--amber)':'var(--red)';
+    const bg=ok?'rgba(26,122,110,0.08)':warn?'rgba(176,125,42,0.08)':'rgba(194,59,42,0.08)';
+    return`<div class="sbox" style="background:${bg}"><div style="font-size:0.75rem;font-weight:500;color:${c};margin-bottom:2px">${s.l}</div><div style="font-size:1.375rem;font-weight:500;color:${c}">${r.irrV.toFixed(1)}%</div><div style="font-size:0.75rem;color:${c}">IRR · ${r.em.toFixed(2)}x EM</div></div>`;
+  }).join('');
+  document.getElementById('waterfall').innerHTML=`
+    <div><div class="wf-lbl">LP preferred return</div><div class="wf-val">${(pref*100).toFixed(1)}% p.a.</div><div class="wf-sub">Cumulative: $${prefCum.toFixed(1)}M</div></div>
+    <div><div class="wf-lbl">GP carry (above pref)</div><div class="wf-val">${(carry*100).toFixed(0)}%</div><div class="wf-sub">GP earns: $${gpCarry.toFixed(1)}M</div></div>
+    <div><div class="wf-lbl">LP net return</div><div class="wf-val">${lpEM.toFixed(2)}x EM</div><div class="wf-sub">Net to LP: $${lpTotal.toFixed(1)}M</div></div>`;
+}
+
+// ─── USAGE TRACKING (Unlimited tier — tracking only) ─────────────
+const TIER = 'institutional';
+const LIMIT = Infinity;
+
+function getUsage() {
+  const key = 'apl_usage_' + TIER;
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + now.getMonth();
+  try {
+    const stored = JSON.parse(localStorage.getItem(key) || '{}');
+    if (stored.month !== monthKey) return { month: monthKey, count: 0 };
+    return stored;
+  } catch(e) { return { month: monthKey, count: 0 }; }
+}
+
+function saveUsage(usage) {
+  try { localStorage.setItem('apl_usage_' + TIER, JSON.stringify(usage)); } catch(e) {}
+}
+
+function consumeCall() {
+  const usage = getUsage();
+  usage.count++;
+  saveUsage(usage);
+  updateUsageDisplay();
+  return true; // Always true — unlimited tier
+}
+
+function updateUsageDisplay() {
+  const usage = getUsage();
+  document.querySelectorAll('.usage-display').forEach(el => {
+    el.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">' +
+        '<span style="font-size:0.72rem;color:var(--ink3);text-transform:uppercase;letter-spacing:0.04em;">AI calls this month</span>' +
+        '<span style="font-size:0.75rem;font-weight:500;color:var(--teal);">' + usage.count.toLocaleString() + ' used &nbsp;·&nbsp; Unlimited</span>' +
+      '</div>' +
+      '<div style="height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;">' +
+        '<div style="height:100%;width:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:3px;opacity:0.4;"></div>' +
+      '</div>';
+  });
+}
+
+async function runAI(){
+  consumeCall();
+  const addr=currentPostcode&&POSTCODES[currentPostcode]?POSTCODES[currentPostcode].suburb+', '+POSTCODES[currentPostcode].state:'the specified location';
+  const aname=document.getElementById('aname').value;
+  const aclass=document.getElementById('aclass').value;
+  const price=document.getElementById('price').value;
+  const noi=document.getElementById('noi').value;
+  const sponsor=document.getElementById('sponsor').value;
+  const hurdle=document.getElementById('hurdle-s').value;
+  const hold=document.getElementById('hold-s').value;
+  const btn=document.getElementById('ai-btn');btn.disabled=true;
+  document.getElementById('ai-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Drafting IC memo...</div>';
+  const prompt=`You are a senior real estate fund manager drafting an investment committee memo. Asset: ${aname} (${aclass}) at ${addr}. Fund: ${sponsor}. Price: $${price}M. NOI: $${noi}M. Hold: ${hold}yr. Hurdle: ${hurdle}%. Return ONLY valid JSON: {"thesis":string (2 sentences),"valueCreation":string (2 sentences),"keyRisks":array of 4 strings,"esgFactors":string (2 sentences),"exitOptions":array of 3 strings,"macroContext":string (2 sentences),"recommendation":one of "Approve"|"Approve with conditions"|"Further diligence"|"Decline","recommendationRationale":string (2 sentences),"rating":number 1-10}.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const p=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const isApp=p.recommendation==='Approve',isCond=p.recommendation.includes('condition');
+    const rc=isApp?'var(--teal)':isCond?'var(--amber)':'var(--red)';
+    const rb=isApp?'rgba(26,122,110,0.1)':isCond?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+    const rsc=p.rating>=8?'var(--teal)':p.rating>=6?'var(--amber)':'var(--red)';
+    document.getElementById('ai-out').innerHTML=`
+      <div class="rating-row">
+        <div><p style="font-size:0.85rem;font-weight:500;margin:0">${aname}</p><p style="font-size:0.73rem;color:var(--ink3);margin:0">${sponsor} · ${addr}</p></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-size:1rem;font-weight:500;color:${rsc}">${p.rating}/10</span><span style="font-size:0.73rem;padding:4px 12px;border-radius:20px;background:${rb};color:${rc};font-weight:500">${p.recommendation}</span></div>
+      </div>
+      <div class="iblock" style="background:rgba(24,95,165,0.07)"><div class="ihead" style="color:var(--blue)">Investment thesis</div><div style="color:var(--ink2)">${p.thesis}</div></div>
+      <div class="iblock" style="background:rgba(26,122,110,0.07)"><div class="ihead" style="color:var(--teal)">Value creation</div><div style="color:var(--ink2)">${p.valueCreation}</div></div>
+      <div class="iblock" style="background:var(--paper2)"><div class="ihead" style="color:var(--ink3)">Macro context</div><div style="color:var(--ink2)">${p.macroContext}</div></div>
+      <div class="iblock" style="background:rgba(176,125,42,0.07)"><div class="ihead" style="color:var(--amber)">ESG assessment</div><div style="color:var(--ink2)">${p.esgFactors}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0">
+        <div><p style="font-size:0.68rem;font-weight:500;color:var(--red);margin:0 0 5px;text-transform:uppercase;letter-spacing:0.06em">Key risks</p><div class="flags">${p.keyRisks.map(r=>`<span class="flag" style="background:rgba(194,59,42,0.08);color:var(--red)">${r}</span>`).join('')}</div></div>
+        <div><p style="font-size:0.68rem;font-weight:500;color:var(--teal);margin:0 0 5px;text-transform:uppercase;letter-spacing:0.06em">Exit options</p><div class="flags">${p.exitOptions.map(r=>`<span class="flag" style="background:rgba(26,122,110,0.08);color:var(--teal)">${r}</span>`).join('')}</div></div>
+      </div>
+      <div class="iblock" style="background:${rb}"><div class="ihead" style="color:${rc}">Committee rationale</div><div style="color:${rc}">${p.recommendationRationale}</div></div>`;
+  }catch(e){document.getElementById('ai-out').innerHTML='<p style="color:var(--red);font-size:0.8rem">Could not generate memo. Please try again.</p>';}
+  btn.disabled=false;
+}
+async function fetchNews(){
+  consumeCall();
+  const aclass=document.getElementById('aclass').value;
+  const addr=currentPostcode&&POSTCODES[currentPostcode]?POSTCODES[currentPostcode].suburb:'Sydney';
+  document.getElementById('news-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Loading institutional signals...</div>';
+  const prompt=`Generate 4 realistic institutional property market intelligence items for ${aclass} investment in ${addr}, Australia in 2026. Cover REIT flows, interest rates, offshore capital, sector demand. Return ONLY a JSON array of 4 objects: {"source":string,"headline":string (max 12 words),"summary":string (1-2 sentences),"sentiment":"positive"|"neutral"|"negative"}. No markdown.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const articles=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    document.getElementById('news-out').innerHTML=articles.map(a=>`
+      <div class="news-item">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:0.68rem;color:var(--ink3)">${a.source}</span>
+          <span style="font-size:0.65rem;padding:2px 7px;border-radius:8px;background:${a.sentiment==='positive'?'rgba(26,122,110,0.1)':a.sentiment==='negative'?'rgba(194,59,42,0.1)':'var(--paper3)'};color:${a.sentiment==='positive'?'var(--teal)':a.sentiment==='negative'?'var(--red)':'var(--ink3)'}">${a.sentiment}</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--ink);line-height:1.4;margin:2px 0">${a.headline}</p>
+        <p style="font-size:0.75rem;color:var(--ink2);line-height:1.5">${a.summary}</p>
+      </div>`).join('');
+  }catch(e){document.getElementById('news-out').innerHTML='<p style="color:var(--red);font-size:0.8rem">Could not load signals.</p>';}
+}
+['price','noi'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{clearTimeout(calcTimer);calcTimer=setTimeout(calc,100);}));
+calc();
+updateUsageDisplay();
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AussiePropLens — AI-Powered Property Intelligence</title>
+<meta name="description" content="Institutional-grade property analysis for every Australian investor. Residential, commercial and institutional deal intelligence powered by AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f1117;
+    --ink2: #3a3d4a;
+    --ink3: #7a7f8e;
+    --paper: #fafaf8;
+    --paper2: #f2f1ed;
+    --paper3: #e8e6df;
+    --gold: #c9973a;
+    --gold2: #f0c063;
+    --teal: #1a7a6e;
+    --teal2: #e6f4f2;
+    --red: #c23b2a;
+    --border: rgba(15,17,23,0.1);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; }
+
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(250,250,248,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 2rem; height:64px; display:flex; align-items:center; justify-content:space-between; }
+  .nav-logo { font-family:'DM Serif Display',serif; font-size:1.25rem; color:var(--ink); text-decoration:none; letter-spacing:-0.02em; }
+  .nav-logo span { color:var(--gold); }
+  .nav-links { display:flex; align-items:center; gap:2rem; }
+  .nav-links a { font-size:0.875rem; color:var(--ink2); text-decoration:none; font-weight:400; }
+  .nav-links a:hover { color:var(--ink); }
+  .nav-cta { background:var(--ink); color:var(--paper) !important; padding:8px 20px; border-radius:6px; font-weight:500 !important; font-size:0.875rem; }
+  .nav-cta:hover { background:var(--ink2) !important; }
+
+  /* HERO */
+  .hero { min-height:100vh; display:flex; align-items:center; padding:120px 2rem 80px; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(201,151,58,0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 20% 80%, rgba(26,122,110,0.06) 0%, transparent 50%); pointer-events:none; }
+  .hero-grid { position:absolute; inset:0; opacity:0.03; background-image: linear-gradient(var(--ink) 1px, transparent 1px), linear-gradient(90deg, var(--ink) 1px, transparent 1px); background-size:60px 60px; pointer-events:none; }
+  .hero-inner { max-width:1100px; margin:0 auto; width:100%; position:relative; }
+  .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:0.75rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(201,151,58,0.3); padding:6px 14px; border-radius:20px; margin-bottom:2rem; }
+  .hero-eyebrow::before { content:''; width:6px; height:6px; background:var(--gold); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  h1 { font-family:'DM Serif Display',serif; font-size:clamp(2.8rem,6vw,5rem); line-height:1.05; letter-spacing:-0.03em; margin-bottom:1.5rem; max-width:800px; }
+  h1 em { color:var(--gold); font-style:italic; }
+  .hero-sub { font-size:1.125rem; color:var(--ink2); max-width:520px; line-height:1.7; margin-bottom:2.5rem; font-weight:300; }
+  .hero-actions { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .btn-primary { background:var(--ink); color:var(--paper); padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:500; font-size:0.9375rem; transition:all 0.2s; border:none; cursor:pointer; display:inline-block; }
+  .btn-primary:hover { background:var(--ink2); transform:translateY(-1px); }
+  .btn-secondary { background:transparent; color:var(--ink); padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:400; font-size:0.9375rem; border:1px solid var(--border); transition:all 0.2s; display:inline-block; }
+  .btn-secondary:hover { background:var(--paper2); }
+  .hero-note { font-size:0.8125rem; color:var(--ink3); margin-top:1rem; }
+  .hero-stats { display:flex; gap:3rem; margin-top:4rem; padding-top:2.5rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .stat-item p:first-child { font-family:'DM Serif Display',serif; font-size:2rem; letter-spacing:-0.03em; color:var(--ink); }
+  .stat-item p:last-child { font-size:0.8125rem; color:var(--ink3); margin-top:2px; }
+
+  /* SECTION SHARED */
+  section { padding:100px 2rem; }
+  .section-inner { max-width:1100px; margin:0 auto; }
+  .section-label { font-size:0.75rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+  h2 { font-family:'DM Serif Display',serif; font-size:clamp(2rem,4vw,3rem); letter-spacing:-0.03em; line-height:1.1; margin-bottom:1.25rem; }
+  h2 em { color:var(--gold); font-style:italic; }
+  .section-sub { font-size:1.0625rem; color:var(--ink2); max-width:540px; line-height:1.7; font-weight:300; }
+
+  /* HOW IT WORKS */
+  .how-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:2px; margin-top:4rem; background:var(--border); border-radius:16px; overflow:hidden; }
+  .how-step { background:var(--paper); padding:2.5rem 2rem; }
+  .how-num { font-family:'DM Serif Display',serif; font-size:3rem; color:var(--paper3); line-height:1; margin-bottom:1.5rem; }
+  .how-step h3 { font-size:1.0625rem; font-weight:500; margin-bottom:0.75rem; }
+  .how-step p { font-size:0.9rem; color:var(--ink2); line-height:1.6; }
+
+  /* PRICING */
+  .pricing-section { background:var(--ink); color:var(--paper); }
+  .pricing-section .section-label { color:var(--gold2); }
+  .pricing-section h2 { color:var(--paper); }
+  .pricing-section .section-sub { color:rgba(250,250,248,0.6); }
+  .pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5px; margin-top:4rem; background:rgba(255,255,255,0.08); border-radius:16px; overflow:hidden; }
+  .pricing-card { background:var(--ink); padding:2.5rem 2rem; position:relative; }
+  .pricing-card.featured { background:#161820; }
+  .pricing-badge { display:inline-block; font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:20px; background:rgba(201,151,58,0.2); color:var(--gold2); margin-bottom:1.5rem; }
+  .pricing-tier { font-size:0.8125rem; color:rgba(250,250,248,0.5); margin-bottom:0.5rem; letter-spacing:0.05em; text-transform:uppercase; }
+  .pricing-price { font-family:'DM Serif Display',serif; font-size:3rem; letter-spacing:-0.03em; color:var(--paper); line-height:1; margin-bottom:0.5rem; }
+  .pricing-price span { font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:300; color:rgba(250,250,248,0.5); }
+  .pricing-desc { font-size:0.9rem; color:rgba(250,250,248,0.5); margin-bottom:2rem; line-height:1.6; }
+  .pricing-features { list-style:none; margin-bottom:2.5rem; display:flex; flex-direction:column; gap:10px; }
+  .pricing-features li { font-size:0.875rem; color:rgba(250,250,248,0.75); display:flex; align-items:flex-start; gap:10px; }
+  .pricing-features li::before { content:'→'; color:var(--gold); flex-shrink:0; margin-top:1px; }
+  .btn-pricing { display:block; text-align:center; padding:13px 24px; border-radius:8px; font-size:0.9rem; font-weight:500; text-decoration:none; transition:all 0.2s; cursor:pointer; }
+  .btn-pricing-outline { border:1px solid rgba(255,255,255,0.2); color:var(--paper); background:transparent; }
+  .btn-pricing-outline:hover { background:rgba(255,255,255,0.05); }
+  .btn-pricing-gold { background:var(--gold); color:var(--ink); border:none; }
+  .btn-pricing-gold:hover { background:var(--gold2); }
+
+  /* FEATURES */
+  .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; margin-top:4rem; }
+  .feature-card { background:var(--paper2); border-radius:12px; padding:2rem; border:1px solid var(--border); transition:all 0.2s; }
+  .feature-card:hover { border-color:rgba(201,151,58,0.3); background:var(--paper); }
+  .feature-icon { width:44px; height:44px; border-radius:10px; background:var(--ink); display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; font-size:1.25rem; }
+  .feature-card h3 { font-size:1rem; font-weight:500; margin-bottom:0.5rem; }
+  .feature-card p { font-size:0.875rem; color:var(--ink2); line-height:1.6; }
+
+  /* TESTIMONIALS */
+  .testimonials-section { background:var(--paper2); }
+  .testimonials-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; margin-top:4rem; }
+  .testimonial { background:var(--paper); border-radius:12px; padding:2rem; border:1px solid var(--border); }
+  .testimonial-text { font-size:0.9375rem; color:var(--ink2); line-height:1.7; margin-bottom:1.5rem; font-style:italic; }
+  .testimonial-author { display:flex; align-items:center; gap:12px; }
+  .testimonial-avatar { width:40px; height:40px; border-radius:50%; background:var(--ink); display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:500; color:var(--paper); flex-shrink:0; }
+  .testimonial-name { font-size:0.875rem; font-weight:500; }
+  .testimonial-role { font-size:0.8125rem; color:var(--ink3); }
+
+  /* FAQ */
+  .faq-list { margin-top:4rem; max-width:720px; }
+  .faq-item { border-bottom:1px solid var(--border); padding:1.5rem 0; }
+  .faq-q { font-size:1rem; font-weight:500; margin-bottom:0.75rem; }
+  .faq-a { font-size:0.9rem; color:var(--ink2); line-height:1.7; }
+
+  /* CTA FOOTER */
+  .cta-section { background:var(--ink); color:var(--paper); text-align:center; padding:120px 2rem; }
+  .cta-section h2 { color:var(--paper); max-width:600px; margin:0 auto 1.25rem; }
+  .cta-section p { color:rgba(250,250,248,0.6); margin-bottom:2.5rem; font-size:1.0625rem; }
+  .cta-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+  .btn-white { background:var(--paper); color:var(--ink); padding:14px 32px; border-radius:8px; text-decoration:none; font-weight:500; font-size:0.9375rem; transition:all 0.2s; }
+  .btn-white:hover { background:var(--paper2); }
+
+  /* FOOTER */
+  footer { background:#0a0b0d; color:rgba(250,250,248,0.4); padding:2.5rem 2rem; text-align:center; font-size:0.8125rem; }
+  footer a { color:rgba(250,250,248,0.4); text-decoration:none; }
+  footer span { color:var(--gold); }
+
+  /* ANIMATIONS */
+  .fade-up { opacity:0; transform:translateY(24px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .fade-up.visible { opacity:1; transform:none; }
+
+  @media(max-width:768px) {
+    nav { padding:0 1rem; }
+    .nav-links { display:none; }
+    section { padding:70px 1.25rem; }
+    .hero { padding:100px 1.25rem 60px; }
+    .hero-stats { gap:2rem; }
+    .pricing-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Aussie<span>Prop</span>Lens</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="residential.html" class="nav-cta">Try free →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">AI-powered · Built for Australia</div>
+    <h1>Property intelligence<br>for <em>every</em> investor</h1>
+    <p class="hero-sub">From first home buyers to institutional funds — AussiePropLens delivers real-time suburb data, AI-generated insights, and financial modelling in seconds.</p>
+    <div class="hero-actions">
+      <a href="residential.html" class="btn-primary">Start analysing free →</a>
+      <a href="#pricing" class="btn-secondary">See pricing</a>
+    </div>
+    <p class="hero-note">No credit card required · Free residential analysis</p>
+    <div class="hero-stats">
+      <div class="stat-item"><p>3</p><p>Investor tiers covered</p></div>
+      <div class="stat-item"><p>AI</p><p>Powered suburb insights</p></div>
+      <div class="stat-item"><p>$0</p><p>To get started</p></div>
+      <div class="stat-item"><p>60s</p><p>To your first analysis</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-inner fade-up">
+    <div class="section-label">How it works</div>
+    <h2>From address to <em>insight</em><br>in under a minute</h2>
+    <div class="how-grid">
+      <div class="how-step"><div class="how-num">01</div><h3>Enter the property</h3><p>Type in a suburb, postcode, or address. Select your property type and enter the key financials.</p></div>
+      <div class="how-step"><div class="how-num">02</div><h3>Get instant metrics</h3><p>Yield, cash flow, mortgage repayments, DSCR, cap rate, IRR — calculated live as you adjust inputs.</p></div>
+      <div class="how-step"><div class="how-num">03</div><h3>Generate AI insights</h3><p>One click delivers suburb intelligence, crime ratings, bull and bear cases, and a deal verdict.</p></div>
+      <div class="how-step"><div class="how-num">04</div><h3>Read the news</h3><p>Live market signals, interest rate movements, and suburb-specific news — all contextualised to your deal.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-inner fade-up">
+    <div class="section-label">Features</div>
+    <h2>Everything you need.<br><em>Nothing you don't.</em></h2>
+    <p class="section-sub">Built by a finance professional for Australian property investors who are serious about making data-driven decisions.</p>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Financial modelling</h3><p>Gross and net yield, cash flow, mortgage repayments, DSCR, cap rate, IRR, and equity multiples — all live.</p></div>
+      <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Crime safety ratings</h3><p>Suburb-level crime scores with context. Know exactly what you're buying into before you sign anything.</p></div>
+      <div class="feature-card"><div class="feature-icon">🤖</div><h3>AI suburb intelligence</h3><p>Bull case, bear case, investment rating, and suburb outlook generated by AI for every deal you analyse.</p></div>
+      <div class="feature-card"><div class="feature-icon">📰</div><h3>Live market news</h3><p>Relevant property news filtered to your suburb and asset class. Sentiment tagged. Always current.</p></div>
+      <div class="feature-card"><div class="feature-icon">⚡</div><h3>Rate stress testing</h3><p>See exactly what happens to your cash flow if rates rise 1%, 2%, or 3%. No surprises.</p></div>
+      <div class="feature-card"><div class="feature-icon">🏢</div><h3>Three investor tiers</h3><p>Retail, commercial, and institutional tools — each built to the standard that tier actually demands.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="pricing-section">
+  <div class="section-inner fade-up">
+    <div class="section-label">Pricing</div>
+    <h2>Simple, honest <em>pricing</em></h2>
+    <p class="section-sub">One price per tier. No hidden fees. Cancel any time. The tool pays for itself on the first deal you don't make a mistake on.</p>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pricing-tier">Residential</div>
+        <div class="pricing-price">$20<span>/mo</span></div>
+        <p class="pricing-desc">For home buyers and residential investors who want to analyse deals with confidence.</p>
+        <ul class="pricing-features">
+          <li>Gross & net yield calculator</li>
+          <li>Monthly cash flow analysis</li>
+          <li>Rate stress test (+1%, +2%, +3%)</li>
+          <li>Suburb crime safety score</li>
+          <li>Walkability & transit scores</li>
+          <li>AI suburb intelligence report</li>
+          <li>Live property news feed</li>
+          <li>Demographic & market data</li>
+        </ul>
+        <a href="#" class="btn-pricing btn-pricing-outline">Get started →</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <div class="pricing-tier">Commercial</div>
+        <div class="pricing-price">$120<span>/mo</span></div>
+        <p class="pricing-desc">For commercial property investors, syndicators, and advisors analysing income-producing assets.</p>
+        <ul class="pricing-features">
+          <li>Everything in Residential</li>
+          <li>Cap rate & NOI modelling</li>
+          <li>DSCR & WALE risk scoring</li>
+          <li>Tenant covenant analysis</li>
+          <li>Precinct intelligence report</li>
+          <li>Deal structuring advice (AI)</li>
+          <li>Exit strategy analysis (AI)</li>
+          <li>Commercial market news feed</li>
+          <li>Planning zone & flood risk data</li>
+        </ul>
+        <a href="#" class="btn-pricing btn-pricing-gold">Get started →</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-tier">Institutional</div>
+        <div class="pricing-price">$250<span>/mo</span></div>
+        <p class="pricing-desc">For fund managers, family offices, and advisors who need IC-grade analysis on every deal.</p>
+        <ul class="pricing-features">
+          <li>Everything in Commercial</li>
+          <li>Levered IRR modelling</li>
+          <li>Equity multiple & waterfall</li>
+          <li>Bear / base / bull scenarios</li>
+          <li>LP/GP carry calculation</li>
+          <li>AI investment committee memo</li>
+          <li>ESG assessment (AI)</li>
+          <li>Macro & capital markets intel</li>
+          <li>Institutional market signals</li>
+        </ul>
+        <a href="#" class="btn-pricing btn-pricing-outline">Get started →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="section-inner fade-up">
+    <div class="section-label">Early users</div>
+    <h2>What investors are <em>saying</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <p class="testimonial-text">"I spent 3 hours on a spreadsheet before I found AussiePropLens. Now I can stress-test a deal in 60 seconds. The AI suburb report alone is worth the subscription."</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">JM</div><div><p class="testimonial-name">James M.</p><p class="testimonial-role">Residential investor · Sydney</p></div></div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"The DSCR and WALE risk scoring is exactly what I needed. My broker was impressed I already had the numbers before we even sat down."</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">SK</div><div><p class="testimonial-name">Sarah K.</p><p class="testimonial-role">Commercial investor · Melbourne</p></div></div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"The IC memo output is genuinely impressive. Saves our team hours of prep work on every new deal. The IRR scenarios are spot on."</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">RP</div><div><p class="testimonial-name">Ryan P.</p><p class="testimonial-role">Fund associate · Brisbane</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="section-inner fade-up">
+    <div class="section-label">FAQ</div>
+    <h2>Questions <em>answered</em></h2>
+    <div class="faq-list">
+      <div class="faq-item"><p class="faq-q">Is there a free trial?</p><p class="faq-a">The residential analyser is free to use with no credit card required. Commercial and institutional tiers offer a 7-day free trial.</p></div>
+      <div class="faq-item"><p class="faq-q">Where does the suburb data come from?</p><p class="faq-a">Suburb intelligence is powered by a combination of public data sources and AI analysis. Crime scores, walkability, transit, and market data are updated regularly.</p></div>
+      <div class="faq-item"><p class="faq-q">How accurate is the AI analysis?</p><p class="faq-a">AI insights are generated using Claude — Anthropic's industry-leading model — contextualised to your specific property inputs and suburb data. They are designed to inform, not replace, professional due diligence.</p></div>
+      <div class="faq-item"><p class="faq-q">Can I cancel any time?</p><p class="faq-a">Yes. No lock-in contracts, no cancellation fees. Cancel from your account dashboard any time.</p></div>
+      <div class="faq-item"><p class="faq-q">Is this financial advice?</p><p class="faq-a">No. AussiePropLens is an analysis and information tool. It does not constitute financial, legal, or investment advice. Always consult a licensed professional before making investment decisions.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="section-label" style="color:var(--gold2)">Get started today</div>
+  <h2>Stop guessing.<br>Start <em>knowing.</em></h2>
+  <p>Analyse your first property in under 60 seconds. Free to start.</p>
+  <div class="cta-actions">
+    <a href="residential.html" class="btn-white">Try residential free →</a>
+    <a href="#pricing" class="btn-secondary" style="border-color:rgba(255,255,255,0.2);color:var(--paper)">See all plans</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 <span>AussiePropLens</span> · Built in Australia · Not financial advice · <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

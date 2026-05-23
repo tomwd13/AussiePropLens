@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial Analyser — AussiePropLens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7f8e;--paper:#fafaf8;--paper2:#f2f1ed;--paper3:#e8e6df;--gold:#c9973a;--teal:#1a7a6e;--red:#c23b2a;--amber:#b07d2a;--blue:#185fa5;--border:rgba(15,17,23,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,250,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;}.nav-logo span{color:var(--gold);}
+.nav-back{font-size:0.875rem;color:var(--ink2);text-decoration:none;}
+.page-header{padding:100px 2rem 1.5rem;max-width:1100px;margin:0 auto;}
+.tier-badge{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);background:rgba(201,151,58,0.1);border:1px solid rgba(201,151,58,0.2);padding:5px 12px;border-radius:20px;margin-bottom:1rem;}
+.page-title{font-family:'DM Serif Display',serif;font-size:2rem;letter-spacing:-0.03em;margin-bottom:0.4rem;}
+.page-sub{font-size:0.9375rem;color:var(--ink2);}
+.tool-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;}
+.tool-grid{display:grid;grid-template-columns:400px 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:960px){.tool-grid{grid-template-columns:1fr;}}
+.panel{background:var(--paper);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;}
+.panel-head{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-head h3{font-size:0.875rem;font-weight:500;}
+.panel-body{padding:1.5rem;}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;letter-spacing:0.04em;text-transform:uppercase;}
+.field input[type=number],.field input[type=text],.field select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;transition:border-color 0.15s;}
+.field input:focus{border-color:var(--gold);}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pc-row{display:flex;gap:8px;align-items:center;}
+.pc-row input{width:120px;font-size:1.1rem;font-weight:500;letter-spacing:0.1em;padding:9px 12px;flex-shrink:0;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;}
+.pc-row input:focus{border-color:var(--gold);}
+.suburb-pill{display:inline-flex;align-items:center;gap:8px;background:var(--paper2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:0.8125rem;flex:1;}
+.suburb-pill b{font-weight:500;}.suburb-pill span{color:var(--ink3);font-size:0.75rem;}
+.suburb-pill .clr{cursor:pointer;color:var(--ink3);margin-left:auto;font-size:1rem;line-height:1;}.suburb-pill .clr:hover{color:var(--red);}
+.pc-msg{font-size:0.78rem;color:var(--ink3);margin-top:5px;min-height:18px;}.pc-msg.err{color:var(--red);}
+.dual-input{display:flex;align-items:center;gap:10px;margin-top:5px;}
+.dual-input input[type=range]{flex:1;accent-color:var(--ink);height:4px;cursor:pointer;}
+.dual-input input[type=number]{width:72px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;text-align:right;flex-shrink:0;}
+.dual-input input[type=number]:focus{border-color:var(--gold);}
+.dual-unit{font-size:0.8rem;color:var(--ink3);flex-shrink:0;min-width:24px;}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.1rem;}
+.metric{background:var(--paper2);border-radius:10px;padding:11px 14px;}
+.mlabel{font-size:0.68rem;color:var(--ink3);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px;}
+.mval{font-size:1.2rem;font-weight:500;}
+.risk-item{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:8px;margin-bottom:6px;}
+.risk-item:last-child{margin-bottom:0;}
+.risk-icon{font-size:13px;margin-top:1px;flex-shrink:0;}
+.risk-lbl{font-size:0.75rem;font-weight:500;margin-bottom:1px;}
+.risk-msg{font-size:0.73rem;line-height:1.4;}
+.mkt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mkt-item{background:var(--paper2);border-radius:8px;padding:9px 12px;}
+.mkt-lbl{font-size:0.68rem;color:var(--ink3);margin-bottom:2px;}
+.mkt-val{font-size:0.9375rem;font-weight:500;}
+.divider{font-size:0.68rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin:1.1rem 0 0.6rem;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.ai-btn{width:100%;padding:11px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;margin-bottom:1rem;}
+.ai-btn:hover{opacity:0.85;}.ai-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.news-btn{width:100%;padding:9px;background:transparent;color:var(--ink);border:1px solid var(--border);border-radius:8px;font-size:0.875rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.2s;margin-bottom:1rem;}
+.news-btn:hover{background:var(--paper2);}
+.iblock{border-radius:8px;padding:9px 13px;margin-bottom:7px;font-size:0.8rem;line-height:1.6;}
+.ihead{font-size:0.68rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px;}
+.rating-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;padding-bottom:9px;border-bottom:1px solid var(--border);}
+.flags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.flag{font-size:0.68rem;padding:3px 9px;border-radius:10px;}
+.news-item{padding:9px 0;border-bottom:1px solid var(--border);}.news-item:last-child{border-bottom:none;}
+.spinner{display:flex;align-items:center;gap:7px;font-size:0.8rem;color:var(--ink3);padding:0.5rem 0;}
+@keyframes spin{to{transform:rotate(360deg)}}.spin{animation:spin 0.8s linear infinite;display:inline-block;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-back">← Back</a>
+  <a href="index.html" class="nav-logo">Aussie<span>Prop</span>Lens</a>
+  <span style="font-size:0.75rem;color:var(--gold);background:rgba(201,151,58,0.1);padding:4px 12px;border-radius:20px;">Commercial</span>
+</nav>
+<div class="page-header">
+  <div class="tier-badge">🏢 Commercial · $120/mo</div>
+  <h1 class="page-title">Commercial deal analyser</h1>
+  <p class="page-sub">Cap rate, NOI, DSCR, WALE and AI tenant covenant analysis for income-producing assets.</p>
+</div>
+<div class="tool-wrap">
+  <div class="tool-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Asset details</h3></div>
+        <div class="panel-body">
+
+          <div class="field">
+            <label>Postcode</label>
+            <div class="pc-row">
+              <input type="text" id="pc-input" maxlength="4" placeholder="2150" oninput="onPostcode(this.value)">
+              <div id="suburb-pill" style="display:none" class="suburb-pill">
+                <b id="suburb-name"></b><span id="suburb-state"></span>
+                <span class="clr" onclick="clearPostcode()">✕</span>
+              </div>
+            </div>
+            <div id="pc-msg" class="pc-msg">Enter a 4-digit postcode</div>
+          </div>
+
+          <div class="field-row">
+            <div class="field"><label>Asset class</label>
+              <select id="aclass" onchange="calc()"><option>Office</option><option selected>Retail strip</option><option>Industrial</option><option>Mixed-use</option><option>Strata office</option></select>
+            </div>
+            <div class="field"><label>Tenant covenant</label>
+              <select id="covenant" onchange="calc()"><option>ASX-listed</option><option selected>National brand</option><option>Regional SME</option><option>Government</option><option>Startup</option></select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field"><label>Purchase price ($)</label>
+              <input type="number" id="price" value="3200000" oninput="calc()">
+            </div>
+            <div class="field"><label>Annual gross rent ($)</label>
+              <input type="number" id="rent" value="224000" oninput="calc()">
+            </div>
+          </div>
+
+          <div class="field"><label>Operating expenses ($)</label>
+            <input type="number" id="opex" value="28000" oninput="calc()">
+          </div>
+
+          <div class="field">
+            <label>Vacancy rate — <b id="vac-disp">5%</b></label>
+            <div class="dual-input">
+              <input type="range" id="vac-s" min="0" max="30" value="5" step="1" oninput="syncDual('vac',this.value)">
+              <input type="number" id="vac-n" value="5" min="0" max="30" step="1" oninput="syncDual('vac',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Interest rate — <b id="rate-disp">6.5%</b></label>
+            <div class="dual-input">
+              <input type="range" id="rate-s" min="3" max="12" value="6.5" step="0.1" oninput="syncDual('rate',this.value)">
+              <input type="number" id="rate-n" value="6.5" min="3" max="12" step="0.1" oninput="syncDual('rate',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>WALE (years) — <b id="wale-disp">5.0yr</b></label>
+            <div class="dual-input">
+              <input type="range" id="wale-s" min="0.5" max="15" value="5" step="0.5" oninput="syncDual('wale',this.value)">
+              <input type="number" id="wale-n" value="5" min="0.5" max="15" step="0.5" oninput="syncDual('wale',this.value)">
+              <span class="dual-unit">yr</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>LVR — <b id="lvr-disp">60%</b></label>
+            <div class="dual-input">
+              <input type="range" id="lvr-s" min="40" max="70" value="60" step="5" oninput="syncDual('lvr',this.value)">
+              <input type="number" id="lvr-n" value="60" min="40" max="70" step="5" oninput="syncDual('lvr',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Rent escalation p.a. — <b id="esc-disp">3.5%</b></label>
+            <div class="dual-input">
+              <input type="range" id="esc-s" min="0" max="6" value="3.5" step="0.5" oninput="syncDual('esc',this.value)">
+              <input type="number" id="esc-n" value="3.5" min="0" max="6" step="0.5" oninput="syncDual('esc',this.value)">
+              <span class="dual-unit">%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-head"><h3>Financial metrics</h3><span id="suburb-badge" style="font-size:0.75rem;color:var(--ink3)">—</span></div>
+        <div class="panel-body">
+          <div class="metrics-grid">
+            <div class="metric"><div class="mlabel">Cap rate</div><div class="mval" id="m-cap">—</div></div>
+            <div class="metric"><div class="mlabel">NOI (annual)</div><div class="mval" id="m-noi">—</div></div>
+            <div class="metric"><div class="mlabel">DSCR</div><div class="mval" id="m-dscr">—</div></div>
+            <div class="metric"><div class="mlabel">5yr NOI grown</div><div class="mval" id="m-noi5">—</div></div>
+            <div class="metric"><div class="mlabel">Cap vs funding</div><div class="mval" id="m-spread">—</div></div>
+            <div class="metric"><div class="mlabel">Annual interest</div><div class="mval" id="m-int">—</div></div>
+          </div>
+          <div class="divider">Risk indicators</div>
+          <div id="risks"></div>
+          <div class="divider">Precinct benchmarks</div>
+          <div class="mkt-grid" id="benchmarks"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>AI deal intelligence</h3></div>
+        <div class="panel-body">
+          <div class="usage-display" style="background:var(--paper2);border-radius:8px;padding:10px 14px;margin-bottom:10px;"></div>
+          <button class="ai-btn" id="ai-btn" onclick="runAI()">✦ Generate deal analysis →</button>
+          <div id="ai-out" style="font-size:0.8125rem;color:var(--ink3)"><p>Enter a postcode and click generate for AI-powered tenant covenant analysis and deal intelligence.</p></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Commercial market news</h3></div>
+        <div class="panel-body">
+          <button class="news-btn" onclick="fetchNews()">↻ Load commercial news</button>
+          <div id="news-out" style="font-size:0.8125rem;color:var(--ink3)"><p>Click above to load commercial property news for this asset class and location.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const POSTCODES={
+  '2000':{suburb:'Sydney CBD',state:'NSW'},'2010':{suburb:'Surry Hills',state:'NSW'},'2015':{suburb:'Alexandria',state:'NSW'},
+  '2060':{suburb:'North Sydney',state:'NSW'},'2065':{suburb:'St Leonards',state:'NSW'},'2150':{suburb:'Parramatta',state:'NSW'},
+  '2000':{suburb:'Sydney CBD',state:'NSW'},'2113':{suburb:'Macquarie Park',state:'NSW'},'2148':{suburb:'Blacktown',state:'NSW'},
+  '3000':{suburb:'Melbourne CBD',state:'VIC'},'3008':{suburb:'Docklands',state:'VIC'},'3121':{suburb:'Richmond',state:'VIC'},
+  '4000':{suburb:'Brisbane CBD',state:'QLD'},'4006':{suburb:'Fortitude Valley',state:'QLD'},'4101':{suburb:'South Brisbane',state:'QLD'},
+  '5000':{suburb:'Adelaide CBD',state:'SA'},'6000':{suburb:'Perth CBD',state:'WA'},'2600':{suburb:'Canberra City',state:'ACT'},
+};
+let currentPostcode=null;
+let calcTimer=null;
+
+function onPostcode(val){
+  val=val.replace(/\D/g,'');
+  document.getElementById('pc-input').value=val;
+  const msg=document.getElementById('pc-msg');
+  const pill=document.getElementById('suburb-pill');
+  if(val.length<4){pill.style.display='none';msg.className='pc-msg';msg.textContent=val.length>0?`${4-val.length} more digit${4-val.length>1?'s':''}…`:'Enter a 4-digit postcode';currentPostcode=null;return;}
+  if(POSTCODES[val]){
+    const d=POSTCODES[val];currentPostcode=val;
+    document.getElementById('suburb-name').textContent=d.suburb;
+    document.getElementById('suburb-state').textContent=d.state;
+    pill.style.display='inline-flex';msg.className='pc-msg';msg.textContent='';
+    document.getElementById('suburb-badge').textContent=d.suburb+', '+d.state;
+  } else {
+    currentPostcode=null;pill.style.display='none';
+    msg.className='pc-msg err';msg.textContent='Postcode not found. Try another.';
+    document.getElementById('suburb-badge').textContent='—';
+  }
+}
+function clearPostcode(){
+  document.getElementById('pc-input').value='';document.getElementById('suburb-pill').style.display='none';
+  document.getElementById('pc-msg').textContent='Enter a 4-digit postcode';document.getElementById('pc-msg').className='pc-msg';
+  document.getElementById('suburb-badge').textContent='—';currentPostcode=null;
+}
+function syncDual(id,val){
+  val=parseFloat(val);
+  const s=document.getElementById(id+'-s'),n=document.getElementById(id+'-n');
+  const min=parseFloat(s.min),max=parseFloat(s.max);
+  val=Math.min(max,Math.max(min,isNaN(val)?min:val));
+  s.value=val;n.value=val;
+  updateLabels();clearTimeout(calcTimer);calcTimer=setTimeout(calc,60);
+}
+function updateLabels(){
+  document.getElementById('vac-disp').textContent=document.getElementById('vac-s').value+'%';
+  document.getElementById('rate-disp').textContent=parseFloat(document.getElementById('rate-s').value).toFixed(1)+'%';
+  document.getElementById('wale-disp').textContent=parseFloat(document.getElementById('wale-s').value).toFixed(1)+'yr';
+  document.getElementById('lvr-disp').textContent=document.getElementById('lvr-s').value+'%';
+  document.getElementById('esc-disp').textContent=parseFloat(document.getElementById('esc-s').value).toFixed(1)+'%';
+}
+function calc(){
+  updateLabels();
+  const price=parseFloat(document.getElementById('price').value)||0;
+  const gross=parseFloat(document.getElementById('rent').value)||0;
+  const vac=parseFloat(document.getElementById('vac-s').value)/100;
+  const opex=parseFloat(document.getElementById('opex').value)||0;
+  const rate=parseFloat(document.getElementById('rate-s').value)/100;
+  const wale=parseFloat(document.getElementById('wale-s').value);
+  const lvr=parseFloat(document.getElementById('lvr-s').value)/100;
+  const esc=parseFloat(document.getElementById('esc-s').value)/100;
+  const eff=gross*(1-vac);const noi=eff-opex;
+  const cap=price>0?(noi/price)*100:0;
+  const loan=price*lvr;const annInt=loan*rate;
+  const dscr=annInt>0?noi/annInt:0;
+  const noi5=noi*Math.pow(1+esc,5);
+  const spread=cap-rate*100;
+  document.getElementById('m-cap').textContent=cap.toFixed(2)+'%';
+  document.getElementById('m-noi').textContent='$'+Math.round(noi).toLocaleString();
+  const dscrEl=document.getElementById('m-dscr');
+  dscrEl.textContent=dscr.toFixed(2)+'x';
+  dscrEl.style.color=dscr>=1.25?'var(--teal)':dscr>=1?'var(--amber)':'var(--red)';
+  document.getElementById('m-noi5').textContent='$'+Math.round(noi5).toLocaleString();
+  const spreadEl=document.getElementById('m-spread');
+  spreadEl.textContent=(spread>0?'+':'')+spread.toFixed(2)+'%';
+  spreadEl.style.color=spread>0?'var(--teal)':'var(--red)';
+  document.getElementById('m-int').textContent='$'+Math.round(annInt).toLocaleString();
+  const risks=[
+    {ok:dscr>=1.25,warn:dscr>=1,l:'Debt service coverage',msg:dscr>=1.25?dscr.toFixed(2)+'x — above 1.25x lender threshold':dscr>=1?dscr.toFixed(2)+'x — marginal coverage':dscr.toFixed(2)+'x — fails to cover interest'},
+    {ok:wale>=4,warn:wale>=2,l:'WALE security',msg:wale>=4?wale.toFixed(1)+'yr — strong lease tenure':wale>=2?wale.toFixed(1)+'yr — moderate, review expiry profile':wale.toFixed(1)+'yr — high rollover risk'},
+    {ok:spread>0.5,warn:spread>0,l:'Cap rate spread',msg:spread>0.5?'+'+spread.toFixed(2)+'% positive spread':spread>0?'Thin '+spread.toFixed(2)+'% spread':'Negative spread — rate exceeds yield'},
+    {ok:vac<=0.05,warn:vac<=0.15,l:'Vacancy',msg:vac<=0.05?'Low vacancy — well leased':vac<=0.15?'Moderate — some income at risk':'High vacancy — value-add risk'},
+  ];
+  document.getElementById('risks').innerHTML=risks.map(r=>{
+    const c=r.ok?'var(--teal)':r.warn?'var(--amber)':'var(--red)';
+    const bg=r.ok?'rgba(26,122,110,0.07)':r.warn?'rgba(176,125,42,0.07)':'rgba(194,59,42,0.07)';
+    const icon=r.ok?'✓':r.warn?'⚠':'✕';
+    return`<div class="risk-item" style="background:${bg}"><span class="risk-icon" style="color:${c}">${icon}</span><div><div class="risk-lbl" style="color:${c}">${r.l}</div><div class="risk-msg" style="color:${c}">${r.msg}</div></div></div>`;
+  }).join('');
+  const loc=currentPostcode&&POSTCODES[currentPostcode]?POSTCODES[currentPostcode].suburb+', '+POSTCODES[currentPostcode].state:'Enter postcode';
+  document.getElementById('benchmarks').innerHTML=[
+    {l:'Precinct vacancy',v:'4.2%'},{l:'Market cap rate',v:'5.8–6.4%'},
+    {l:'Rental growth',v:'+4.1% p.a.'},{l:'Your cap vs market',v:cap.toFixed(2)+'% vs 5.8–6.4%'},
+    {l:'Foot traffic',v:'High'},{l:'Location',v:loc},
+  ].map(m=>`<div class="mkt-item"><div class="mkt-lbl">${m.l}</div><div class="mkt-val">${m.v}</div></div>`).join('');
+}
+
+// ─── RATE LIMITING ───────────────────────────────────────────────
+const TIER = 'commercial';
+const LIMIT = 5000;
+
+function getUsage() {
+  const key = 'apl_usage_' + TIER;
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + now.getMonth();
+  try {
+    const stored = JSON.parse(localStorage.getItem(key) || '{}');
+    if (stored.month !== monthKey) return { month: monthKey, count: 0 };
+    return stored;
+  } catch(e) { return { month: monthKey, count: 0 }; }
+}
+
+function saveUsage(usage) {
+  try { localStorage.setItem('apl_usage_' + TIER, JSON.stringify(usage)); } catch(e) {}
+}
+
+function consumeCall() {
+  const usage = getUsage();
+  if (usage.count >= LIMIT) return false;
+  usage.count++;
+  saveUsage(usage);
+  updateUsageDisplay();
+  return true;
+}
+
+function updateUsageDisplay() {
+  const usage = getUsage();
+  const remaining = Math.max(0, LIMIT - usage.count);
+  const pct = Math.round((usage.count / LIMIT) * 100);
+  const color = remaining > 1000 ? 'var(--teal)' : remaining > 200 ? 'var(--amber)' : 'var(--red)';
+  document.querySelectorAll('.usage-display').forEach(el => {
+    el.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">' +
+        '<span style="font-size:0.72rem;color:var(--ink3);text-transform:uppercase;letter-spacing:0.04em;">AI calls this month</span>' +
+        '<span style="font-size:0.75rem;font-weight:500;color:' + color + ';">' + remaining.toLocaleString() + ' / ' + LIMIT.toLocaleString() + ' remaining</span>' +
+      '</div>' +
+      '<div style="height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;">' +
+        '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:3px;transition:width 0.4s;"></div>' +
+      '</div>' +
+      (remaining === 0 ? '<p style="font-size:0.75rem;color:var(--red);margin-top:6px;">Monthly limit reached. Resets 1st of next month. <a href='index.html#pricing' style='color:var(--red);font-weight:500;'>Upgrade plan →</a></p>' : '');
+  });
+}
+
+async function runAI(){
+  if (!consumeCall()) { document.getElementById('ai-out').innerHTML='<p style="color:var(--red);font-size:0.8rem">Monthly AI call limit reached (5,000/mo). Upgrade your plan or wait until next month.</p>'; return; }
+  const addr=currentPostcode&&POSTCODES[currentPostcode]?POSTCODES[currentPostcode].suburb+', '+POSTCODES[currentPostcode].state:'the specified location';
+  const aclass=document.getElementById('aclass').value;
+  const price=document.getElementById('price').value;
+  const rent=document.getElementById('rent').value;
+  const covenant=document.getElementById('covenant').value;
+  const wale=document.getElementById('wale-s').value;
+  const btn=document.getElementById('ai-btn');btn.disabled=true;
+  document.getElementById('ai-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Analysing deal...</div>';
+  const prompt=`You are a senior Australian commercial property fund manager. Provide deal intelligence for a ${aclass} at ${addr}. Price: $${parseInt(price).toLocaleString()}, rent: $${parseInt(rent).toLocaleString()}/yr, tenant covenant: ${covenant}, WALE: ${wale}yr. Return ONLY valid JSON: {"precinctOutlook":string (2 sentences),"tenantCovenant":string (2 sentences),"structuringAdvice":string (2 sentences),"exitStrategy":string (2 sentences),"riskFlags":array of 4 strings,"opportunities":array of 3 strings,"rating":number 1-10,"ratingLabel":one word}.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const p=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const rc=p.rating>=8?'var(--teal)':p.rating>=6?'var(--amber)':'var(--red)';
+    const rb=p.rating>=8?'rgba(26,122,110,0.1)':p.rating>=6?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+    document.getElementById('ai-out').innerHTML=`
+      <div class="rating-row"><span style="font-size:0.85rem;font-weight:500">${aclass} · ${addr}</span><div style="display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;background:${rb}"><span style="font-size:1.2rem;font-weight:500;color:${rc}">${p.rating}</span><span style="font-size:0.75rem;color:${rc}">/10 · ${p.ratingLabel}</span></div></div>
+      <div class="iblock" style="background:rgba(24,95,165,0.07)"><div class="ihead" style="color:var(--blue)">Precinct outlook</div><div style="color:var(--ink2)">${p.precinctOutlook}</div></div>
+      <div class="iblock" style="background:var(--paper2)"><div class="ihead" style="color:var(--ink3)">Tenant covenant</div><div style="color:var(--ink2)">${p.tenantCovenant}</div></div>
+      <div class="iblock" style="background:rgba(26,122,110,0.07)"><div class="ihead" style="color:var(--teal)">Deal structuring</div><div style="color:var(--ink2)">${p.structuringAdvice}</div></div>
+      <div class="iblock" style="background:rgba(176,125,42,0.07)"><div class="ihead" style="color:var(--amber)">Exit strategy</div><div style="color:var(--ink2)">${p.exitStrategy}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+        <div><p style="font-size:0.68rem;font-weight:500;color:var(--red);margin:0 0 5px;text-transform:uppercase;letter-spacing:0.06em">Risk flags</p><div class="flags">${p.riskFlags.map(f=>`<span class="flag" style="background:rgba(194,59,42,0.08);color:var(--red)">${f}</span>`).join('')}</div></div>
+        <div><p style="font-size:0.68rem;font-weight:500;color:var(--teal);margin:0 0 5px;text-transform:uppercase;letter-spacing:0.06em">Opportunities</p><div class="flags">${p.opportunities.map(f=>`<span class="flag" style="background:rgba(26,122,110,0.08);color:var(--teal)">${f}</span>`).join('')}</div></div>
+      </div>`;
+  }catch(e){document.getElementById('ai-out').innerHTML='<p style="color:var(--red);font-size:0.8rem">Could not generate analysis. Please try again.</p>';}
+  btn.disabled=false;
+}
+async function fetchNews(){
+  const addr=currentPostcode&&POSTCODES[currentPostcode]?POSTCODES[currentPostcode].suburb:'Sydney';
+  const aclass=document.getElementById('aclass').value;
+  document.getElementById('news-out').innerHTML='<div class="spinner"><span class="spin">⟳</span> Loading commercial news...</div>';
+  const prompt=`Generate 4 realistic recent commercial property news items for ${aclass} assets in ${addr}, Australia in 2026. Return ONLY a JSON array of 4 objects: {"source":string,"headline":string (max 12 words),"summary":string (1-2 sentences),"sentiment":"positive"|"neutral"|"negative"}. No markdown.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const articles=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    document.getElementById('news-out').innerHTML=articles.map(a=>`
+      <div class="news-item">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:0.68rem;color:var(--ink3)">${a.source}</span>
+          <span style="font-size:0.65rem;padding:2px 7px;border-radius:8px;background:${a.sentiment==='positive'?'rgba(26,122,110,0.1)':a.sentiment==='negative'?'rgba(194,59,42,0.1)':'var(--paper3)'};color:${a.sentiment==='positive'?'var(--teal)':a.sentiment==='negative'?'var(--red)':'var(--ink3)'}">${a.sentiment}</span>
+        </div>
+        <p style="font-size:0.8rem;color:var(--ink);line-height:1.4;margin:2px 0">${a.headline}</p>
+        <p style="font-size:0.75rem;color:var(--ink2);line-height:1.5">${a.summary}</p>
+      </div>`).join('');
+  }catch(e){document.getElementById('news-out').innerHTML='<p style="color:var(--red);font-size:0.8rem">Could not load news.</p>';}
+}
+document.getElementById('price').addEventListener('input',()=>{clearTimeout(calcTimer);calcTimer=setTimeout(calc,100);});
+document.getElementById('rent').addEventListener('input',()=>{clearTimeout(calcTimer);calcTimer=setTimeout(calc,100);});
+document.getElementById('opex').addEventListener('input',()=>{clearTimeout(calcTimer);calcTimer=setTimeout(calc,100);});
+calc();
+updateUsageDisplay();
+</script>
+<!-- RESIDENTIAL ADD-ON SECTION -->
+<div style="max-width:1100px;margin:0 auto;padding:0 2rem 5rem;">
+  <div style="border-top:1px solid var(--border);padding-top:2.5rem;margin-top:1rem;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;">
+      <span style="font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);background:rgba(26,122,110,0.08);border:1px solid rgba(26,122,110,0.15);padding:4px 12px;border-radius:20px;">Included — Residential tools</span>
+      <span style="font-size:0.8rem;color:var(--ink3)">Your plan includes the full residential analyser below</span>
+    </div>
+    <details style="background:var(--paper);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+      <summary style="padding:1rem 1.5rem;font-size:0.9rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;">
+        <span>🏡 Residential deal analyser</span>
+        <span style="font-size:0.8rem;color:var(--ink3);font-weight:400;">Click to expand →</span>
+      </summary>
+      <div style="padding:1.5rem;border-top:1px solid var(--border);" id="res-addon">
+        <!-- POSTCODE -->
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;letter-spacing:0.04em;text-transform:uppercase;">Postcode</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="r2-pc" maxlength="4" placeholder="2010" oninput="onR2Postcode(this.value)" style="width:110px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:1.05rem;font-weight:500;letter-spacing:0.1em;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;">
+            <div id="r2-pill" style="display:none;flex:1;background:var(--paper2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:0.8125rem;display:none;align-items:center;gap:8px;">
+              <b id="r2-suburb"></b><span id="r2-state" style="color:var(--ink3);font-size:0.75rem;"></span>
+              <span onclick="clearR2()" style="cursor:pointer;color:var(--ink3);margin-left:auto;">✕</span>
+            </div>
+          </div>
+          <div id="r2-msg" style="font-size:0.78rem;color:var(--ink3);margin-top:5px;">Enter a 4-digit postcode</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.1rem;">
+          <div><label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Property type</label>
+            <select id="r2-type" onchange="calcR2()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;">
+              <option>House</option><option selected>Apartment</option><option>Townhouse</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Purchase price ($)</label>
+            <input type="number" id="r2-price" value="850000" oninput="calcR2()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;">
+          </div>
+          <div><label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Weekly rent ($)</label>
+            <input type="number" id="r2-rent" value="650" oninput="calcR2()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;">
+          </div>
+          <div><label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Annual costs ($)</label>
+            <input type="number" id="r2-costs" value="9000" oninput="calcR2()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);outline:none;">
+          </div>
+        </div>
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Deposit — <b id="r2-dep-disp">20%</b></label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="range" id="r2-dep-s" min="5" max="40" value="20" step="1" oninput="syncR2('dep',this.value)" style="flex:1;accent-color:var(--ink);">
+            <input type="number" id="r2-dep-n" value="20" min="5" max="40" style="width:65px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;font-family:'DM Sans',sans-serif;text-align:right;">
+            <span style="font-size:0.8rem;color:var(--ink3);">%</span>
+          </div>
+        </div>
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:block;font-size:0.72rem;color:var(--ink3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em;">Interest rate — <b id="r2-rate-disp">6.1%</b></label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="range" id="r2-rate-s" min="2" max="12" value="6.1" step="0.1" oninput="syncR2('rate',this.value)" style="flex:1;accent-color:var(--ink);">
+            <input type="number" id="r2-rate-n" value="6.1" min="2" max="12" step="0.1" style="width:65px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;font-family:'DM Sans',sans-serif;text-align:right;">
+            <span style="font-size:0.8rem;color:var(--ink3);">%</span>
+          </div>
+        </div>
+        <!-- OUTPUTS -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;" id="r2-metrics"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;" id="r2-stress"></div>
+        <div id="r2-suburb-data"></div>
+        <button onclick="runR2AI()" id="r2-ai-btn" style="width:100%;padding:11px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:0.875rem;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:0.5rem;margin-bottom:0.75rem;">✦ Generate suburb AI insights →</button>
+        <div id="r2-ai-out" style="font-size:0.8rem;color:var(--ink3);">Click above to generate AI suburb analysis.</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+const R2_PC={
+  '2000':{suburb:'Sydney CBD',state:'NSW',crime:48,walk:98,transit:97,school:72,life:92,medUnit:850000,growth:4.8,yield:4.2,vac:1.4},
+  '2010':{suburb:'Surry Hills',state:'NSW',crime:55,walk:89,transit:88,school:74,life:89,medUnit:870000,growth:7.1,yield:4.3,vac:1.8},
+  '2026':{suburb:'Bondi',state:'NSW',crime:61,walk:85,transit:79,school:76,life:93,medUnit:1100000,growth:5.8,yield:3.6,vac:1.4},
+  '2042':{suburb:'Newtown',state:'NSW',crime:54,walk:92,transit:88,school:73,life:90,medUnit:790000,growth:6.5,yield:4.3,vac:1.7},
+  '2150':{suburb:'Parramatta',state:'NSW',crime:48,walk:78,transit:84,school:71,life:77,medUnit:620000,growth:8.4,yield:4.9,vac:2.4},
+  '3000':{suburb:'Melbourne CBD',state:'VIC',crime:44,walk:97,transit:96,school:73,life:93,medUnit:550000,growth:4.2,yield:4.7,vac:3.1},
+  '4000':{suburb:'Brisbane CBD',state:'QLD',crime:51,walk:86,transit:84,school:72,life:88,medUnit:640000,growth:9.1,yield:5.2,vac:1.6},
+  '6000':{suburb:'Perth CBD',state:'WA',crime:52,walk:86,transit:82,school:71,life:84,medUnit:480000,growth:11.2,yield:5.9,vac:1.3},
+};
+let r2PC=null, r2Timer=null;
+function onR2Postcode(v){
+  v=v.replace(/\D/g,'');document.getElementById('r2-pc').value=v;
+  const msg=document.getElementById('r2-msg'),pill=document.getElementById('r2-pill');
+  if(v.length<4){pill.style.display='none';msg.style.color='var(--ink3)';msg.textContent=v.length>0?`${4-v.length} more digit${4-v.length>1?'s':''}…`:'Enter a 4-digit postcode';r2PC=null;return;}
+  if(R2_PC[v]){
+    const d=R2_PC[v];r2PC=v;
+    document.getElementById('r2-suburb').textContent=d.suburb;document.getElementById('r2-state').textContent=d.state;
+    pill.style.display='inline-flex';msg.textContent='';calcR2();updateR2Suburb();
+  } else {r2PC=null;pill.style.display='none';msg.style.color='var(--red)';msg.textContent='Postcode not found.';}
+}
+function clearR2(){document.getElementById('r2-pc').value='';document.getElementById('r2-pill').style.display='none';document.getElementById('r2-msg').textContent='Enter a 4-digit postcode';document.getElementById('r2-msg').style.color='var(--ink3)';r2PC=null;}
+function syncR2(id,val){
+  val=parseFloat(val);const s=document.getElementById('r2-'+id+'-s'),n=document.getElementById('r2-'+id+'-n');
+  val=Math.min(parseFloat(s.max),Math.max(parseFloat(s.min),isNaN(val)?parseFloat(s.min):val));
+  s.value=val;n.value=val;
+  document.getElementById('r2-dep-disp').textContent=document.getElementById('r2-dep-s').value+'%';
+  document.getElementById('r2-rate-disp').textContent=parseFloat(document.getElementById('r2-rate-s').value).toFixed(1)+'%';
+  clearTimeout(r2Timer);r2Timer=setTimeout(calcR2,60);
+}
+function calcR2(){
+  const price=parseFloat(document.getElementById('r2-price').value)||0;
+  const wr=parseFloat(document.getElementById('r2-rent').value)||0;
+  const dep=parseFloat(document.getElementById('r2-dep-s').value)/100;
+  const rate=parseFloat(document.getElementById('r2-rate-s').value)/100;
+  const costs=parseFloat(document.getElementById('r2-costs').value)||0;
+  const ar=wr*52,loan=price*(1-dep),n=30*12,r=rate/12;
+  const mo=r===0?loan/n:loan*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+  const gross=price>0?(ar/price)*100:0,net=price>0?((ar-costs)/price)*100:0,cf=(ar-costs-mo*12)/12;
+  document.getElementById('r2-metrics').innerHTML=[
+    {l:'Gross yield',v:gross.toFixed(2)+'%'},{l:'Net yield',v:net.toFixed(2)+'%'},
+    {l:'Monthly repayment',v:'$'+Math.round(mo).toLocaleString()},
+    {l:'Monthly cash flow',v:(cf>=0?'+$':'-$')+Math.abs(Math.round(cf)).toLocaleString(),c:cf>=0?'var(--teal)':'var(--red)'},
+    {l:'Deposit required',v:'$'+Math.round(price*dep).toLocaleString()},
+    {l:'Annual interest',v:'$'+Math.round(loan*rate).toLocaleString()},
+  ].map(m=>`<div style="background:var(--paper2);border-radius:10px;padding:10px 12px;"><div style="font-size:0.68rem;color:var(--ink3);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;">${m.l}</div><div style="font-size:1.1rem;font-weight:500;${m.c?'color:'+m.c:''}">${m.v}</div></div>`).join('');
+  document.getElementById('r2-stress').innerHTML=[1,2,3].map(b=>{
+    const nr=(rate+b/100)/12,nm=nr===0?loan/n:loan*(nr*Math.pow(1+nr,n))/(Math.pow(1+nr,n)-1),ncf=(ar-costs-nm*12)/12,ok=ncf>=-300;
+    return`<div style="background:${ok?'rgba(26,122,110,0.08)':'rgba(194,59,42,0.08)'};border-radius:8px;padding:9px;text-align:center;"><div style="font-size:0.7rem;font-weight:500;color:${ok?'var(--teal)':'var(--red)'}">+${b}% rise</div><div style="font-size:1rem;font-weight:500;color:${ok?'var(--teal)':'var(--red)'}">${ncf>=0?'+$':'-$'}${Math.abs(Math.round(ncf)).toLocaleString()}/mo</div></div>`;
+  }).join('');
+}
+function updateR2Suburb(){
+  if(!r2PC||!R2_PC[r2PC])return;
+  const d=R2_PC[r2PC];
+  const crimeC=d.crime>=70?'var(--teal)':d.crime>=50?'var(--amber)':'var(--red)';
+  const crimeBg=d.crime>=70?'rgba(26,122,110,0.08)':d.crime>=50?'rgba(176,125,42,0.08)':'rgba(194,59,42,0.08)';
+  document.getElementById('r2-suburb-data').innerHTML=`
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.7rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);">Suburb scores</div>
+      ${[{l:'Crime safety',s:d.crime,badge:d.crime>=70?'Low crime':d.crime>=50?'Moderate':'Higher crime',c:crimeC,bg:crimeBg},
+        {l:'Walkability',s:d.walk,badge:d.walk+'/100',c:'var(--blue)',bg:'rgba(24,95,165,0.08)'},
+        {l:'Public transit',s:d.transit,badge:d.transit+'/100',c:'var(--teal)',bg:'rgba(26,122,110,0.08)'},
+      ].map(r=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:0.8rem;color:var(--ink2);flex:1;">${r.l}</span>
+        <div style="width:80px;height:5px;background:var(--paper3);border-radius:3px;overflow:hidden;"><div style="width:${r.s}%;height:100%;background:${r.c};border-radius:3px;"></div></div>
+        <span style="font-size:0.68rem;padding:2px 8px;border-radius:10px;background:${r.bg};color:${r.c};white-space:nowrap;">${r.badge}</span>
+      </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      ${[{l:'Median unit',v:'$'+d.medUnit.toLocaleString()},{l:'Annual growth',v:'+'+d.growth+'%'},{l:'Rental yield',v:d.yield+'%'}]
+        .map(m=>`<div style="background:var(--paper2);border-radius:8px;padding:9px 11px;"><div style="font-size:0.68rem;color:var(--ink3);margin-bottom:2px;">${m.l}</div><div style="font-size:0.9rem;font-weight:500;">${m.v}</div></div>`).join('')}
+    </div>`;
+}
+async function runR2AI(){
+  if (!consumeCall()) { document.getElementById('r2-ai-out').innerHTML='<p style="color:var(--red);">Monthly AI call limit reached.</p>'; return; }
+  if(!r2PC){document.getElementById('r2-ai-out').innerHTML='<p style="color:var(--red);">Enter a valid postcode first.</p>';return;}
+  const d=R2_PC[r2PC];const btn=document.getElementById('r2-ai-btn');btn.disabled=true;
+  document.getElementById('r2-ai-out').innerHTML='<div style="display:flex;align-items:center;gap:7px;font-size:0.8rem;color:var(--ink3);"><span style="animation:spin 0.8s linear infinite;display:inline-block;">⟳</span> Generating...</div>';
+  const prompt=`You are an Australian property analyst. Provide brief investment intelligence for an apartment in ${d.suburb}, ${d.state}. Suburb stats: crime ${d.crime}/100, walk ${d.walk}/100, growth ${d.growth}%, yield ${d.yield}%. Return ONLY valid JSON: {"outlook":string (2 sentences),"bullCase":string (1 sentence),"bearCase":string (1 sentence),"rating":number 1-10,"ratingLabel":one word}.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();const p=JSON.parse(data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
+    const rc=p.rating>=8?'var(--teal)':p.rating>=6?'var(--amber)':'var(--red)';
+    const rb=p.rating>=8?'rgba(26,122,110,0.1)':p.rating>=6?'rgba(176,125,42,0.1)':'rgba(194,59,42,0.1)';
+    document.getElementById('r2-ai-out').innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.85rem;font-weight:500;">${d.suburb}</span>
+        <div style="display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;background:${rb};"><span style="font-size:1.1rem;font-weight:500;color:${rc};">${p.rating}</span><span style="font-size:0.73rem;color:${rc};">/10 · ${p.ratingLabel}</span></div>
+      </div>
+      <div style="border-radius:8px;padding:9px 13px;margin-bottom:6px;background:rgba(24,95,165,0.07);font-size:0.8rem;"><div style="font-size:0.68rem;font-weight:500;color:var(--blue);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Outlook</div>${p.outlook}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="border-radius:8px;padding:9px 13px;background:rgba(26,122,110,0.07);font-size:0.8rem;"><div style="font-size:0.68rem;font-weight:500;color:var(--teal);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Bull</div>${p.bullCase}</div>
+        <div style="border-radius:8px;padding:9px 13px;background:rgba(194,59,42,0.07);font-size:0.8rem;"><div style="font-size:0.68rem;font-weight:500;color:var(--red);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Bear</div>${p.bearCase}</div>
+      </div>`;
+  }catch(e){document.getElementById('r2-ai-out').innerHTML='<p style="color:var(--red);font-size:0.8rem;">Could not generate. Try again.</p>';}
+  btn.disabled=false;
+}
+document.getElementById('r2-dep-n').addEventListener('input',function(){syncR2('dep',this.value);});
+document.getElementById('r2-rate-n').addEventListener('input',function(){syncR2('rate',this.value);});
+calcR2();
+</script>
+</body>
+</html>
