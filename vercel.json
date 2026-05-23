@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/residential", "destination": "/residential.html" },
+    { "source": "/commercial", "destination": "/commercial.html" },
+    { "source": "/institutional", "destination": "/institutional.html" }
+  ]
+}
